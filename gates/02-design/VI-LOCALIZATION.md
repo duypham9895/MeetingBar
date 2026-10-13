@@ -259,7 +259,7 @@ print('NFD! phải chuẩn hoá lại' if s!=u.normalize('NFC',s) else 'OK — N
 
 ### 4.4 Độ dài — tiền đề của xưởng KHÔNG áp nguyên cho app này
 
-`docs/lessons.md` ghi *"tiếng Việt dài hơn 20–30%"*. **Hai phép đo độc lập đều không tái lập được con số đó**, nhưng chúng cũng **không khớp nhau** — xem `batDong` #1.
+`../../../docs/lessons.md` ghi *"tiếng Việt dài hơn 20–30%"*. **Hai phép đo độc lập đều không tái lập được con số đó**, nhưng chúng cũng **không khớp nhau** — xem `batDong` #1.
 
 | Phép đo | Đơn vị | Mẫu | Kết quả |
 |---|---|---|---|
@@ -344,7 +344,7 @@ Chọn đúng 10 chuỗi mà **bản dịch dở lộ ra ngay**. Tất cả theo
 
 ---
 
-## 6. KIỂM BẰNG MÁY — T1, thêm vào `scripts/vibe-check.sh`
+## 6. KIỂM BẰNG MÁY — T1, thêm vào `../../../scripts/vibe-check.sh`
 
 **Không kiểm `count(en) == count(vi)`** — sau khi CL-4 gỡ khối Patron, `en.lproj` còn 355 dòng nhưng chỉ ~339 khoá hữu dụng ⇒ phép kiểm đó **đỏ vĩnh viễn**, và một test đỏ giả sẽ bị học cách phớt lờ. Đó là cách giết một cổng kiểm.
 
@@ -375,4 +375,4 @@ Danh sách gỡ phải là **một file đọc được** (`gates/02-design/STRI
 | 13 | **Con số ~14/1/16 ở §3.1** | đếm `grep -n` + đối chiếu tay với `LEGAL-REVIEW`; **chưa mở từng call-site** để xác nhận cả 16 chuỗi patron chết theo khi gỡ UI | đọc `GeneralTab.swift` + `PatronageService.swift` | ~20 phút |
 | 14 | **`preferences_general_meeting_bar_description` có đúng là hộp About không** | suy từ tên khoá và nội dung, **chưa** đọc nơi nó render. Nếu không phải bề mặt mô tả nguồn gốc thì miễn trừ §6 không áp dụng và rổ "GIỮ TÊN" rỗng | đọc `GeneralTab.swift` | 5 phút |
 
-**Phương pháp của toàn bộ file này:** đọc tĩnh trên nhánh `feat/presence-gate`, `grep`, đọc `.loctable` của macOS, một lần `xcodebuild` thật (có gỡ thư mục thăm dò sau khi đo, `git status` đã sạch trở lại), và các script Swift độc lập đo font/chiều rộng/chiều cao — **không chạy app, không chụp màn hình nào.** Theo `docs/lessons.md`, *"không tìm thấy" ở đây luôn nghĩa là "phương pháp này không tìm thấy"*. **Same vendor, same priors — no external verifier ran.**
+**Phương pháp của toàn bộ file này:** đọc tĩnh trên nhánh `feat/presence-gate`, `grep`, đọc `.loctable` của macOS, một lần `xcodebuild` thật (có gỡ thư mục thăm dò sau khi đo, `git status` đã sạch trở lại), và các script Swift độc lập đo font/chiều rộng/chiều cao — **không chạy app, không chụp màn hình nào.** Theo `../../../docs/lessons.md`, *"không tìm thấy" ở đây luôn nghĩa là "phương pháp này không tìm thấy"*. **Same vendor, same priors — no external verifier ran.**
