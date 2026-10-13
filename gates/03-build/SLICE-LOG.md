@@ -120,3 +120,30 @@ ngôn ngữ** (de, he, ja, nl, zh-Hans, …). Đổi chúng cần **một cái t
 của Duy (Quy tắc 6). Ứng viên đã có ở `../01-spec/WRITER-NOTES.md`.
 
 Không chặn code. **Chặn việc đưa file cho đồng nghiệp.**
+
+---
+
+## Lát 4 — unit test cho module Presence ✅
+
+`MeetingBarTests/PresenceGateTests.swift` — **8/8 xanh.**
+
+```
+RoomIdentityTests
+  ✓ testMeetRoomCodesAreRecognised        abc-defg-hij · ?authuser=0 · #fragment
+  ✓ testTrapsFromRealHistoryAreRejected   /home · /new · /reauth · /accounts/SetOSID
+                                          · /_meet/ · popup "Join with Google Meet"
+  ✓ testZoomConferenceNumbers             /j/81234567890 ✓ · /j/1234 ✗ · /my/duypham ✗
+  ✓ testOtherServicesAreNotClaimed
+
+PresenceGateMergeTests
+  ✓ testSilenceNeedsAtLeastOnePresentAndNoAbsent
+  ✓ testDisagreementFailsOpen             present + absent ⇒ MỞ, cả hai thứ tự
+  ✓ testNoEvidenceOpens                   rỗng · toàn unknown · absent một mình
+  ✓ testUnparseableLinkOpens              /home ⇒ MỞ, không im "cho chắc"
+```
+
+**`testTrapsFromRealHistoryAreRejected` là test đáng giá nhất ở đây.** Mỗi dòng trong nó là
+một false positive **đã quan sát được trong lịch sử thật của Duy**, không phải một ca giả
+định. `meet.google.com/home` xuất hiện nhiều lần mỗi ngày; một lần khớp nhầm nó là cổng im
+cho **mọi** cuộc Meet trong ngày hôm đó. Test này tồn tại để giữ regex chặt khi có người
+tương lai thấy nó "khó đọc" và muốn nới ra.
