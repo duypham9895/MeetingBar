@@ -14,8 +14,8 @@ cuộc họp sắp tới chưa, và im lặng nếu đã ở trong đó.
 
 | # | Stage | Trạng thái | Artifact | Duyệt ngày |
 |---|---|---|---|---|
-| S0 | Discovery | in-progress | `gates/00-discovery/PRODUCT-BRIEF.md` · `LEGAL-SCREEN.md` | |
-| S1 | PRD | pending | `gates/01-spec/PRD.md` · `ACCEPTANCE.md` · `SUCCESS-CRITERIA.md` · `TRACKING-PLAN.md` · `LEGAL-REVIEW.md` | |
+| S0 | Discovery | pass (chờ /vibe:approve) | `gates/00-discovery/PRODUCT-BRIEF.md` · `LEGAL-SCREEN.md` | |
+| S1 | PRD | in-progress | `gates/01-spec/PRD.md` · `ACCEPTANCE.md` · `SUCCESS-CRITERIA.md` · `TRACKING-PLAN.md` · `LEGAL-REVIEW.md` | |
 | S2 | Design | pending | `gates/02-design/` | |
 | S3 | Build | pending | `gates/03-build/SLICE-LOG.md` + commit `feat:` + `licences.json` | |
 | S4 | QA | pending | `gates/04-qa/VERIFICATION.md` · `REVIEW.md` · `EVENT-VERIFICATION.md` | |
@@ -37,3 +37,5 @@ Bảng định tuyến: `../docs/stages.md`.
 | 2026-10-13 | **ĐÍNH CHÍNH KIẾN TRÚC** — bỏ "AX-only", chuyển sang Tầng 1 lịch-sử-trình-duyệt (zero quyền) + Tầng 2 AX opt-in | Đo lịch thật: Meet 71 · Zoom **0** · Teams 1 · Webex 1 trong 30 ngày. Nhánh Zoom mà 5/6 mũi dồn công vào không tồn tại trong thực tế của Duy |
 | 2026-10-13 | **Quyết định D** — làm CẢ HAI tầng. Duy bác khuyến nghị "Tầng 1 một mình" của PM | Quyết định của Duy. PM tự chốt hai hệ quả: D-1 Tầng 2 bật mặc định + xin quyền 1 lần lúc cài, từ chối thì lùi êm về Tầng 1; D-2 Tầng 1 là lát cắt dọc đầu ở S3 |
 | 2026-10-13 | **S0 Discovery HOÀN TẤT** — PRODUCT-BRIEF + LEGAL-SCREEN + go/no-go đã ghi. Con trỏ vẫn ở `00-discovery` | Claude không tự đẩy con trỏ được (Quy tắc 1) |
+| 2026-10-13 | **Quyết định E** — chạy S1 ngay, `noelroom` nhường đường. Duy nguyên văn: *"làm ngay bây h, skip noelroom"* | PM khuyến nghị ngược lại (noelroom có hạn chót cứng 25/12, presence-gate không có) và **bị bác**. Đã ghi đối ứng vào `noelroom/PIPELINE.md` commit `597f503` — một waiver chỉ sống ở một repo là waiver không ai biết |
+| 2026-10-13 | S1 mở. `gates/01-spec/UNDERSTOOD.md` viết TRƯỚC khi stage bắt đầu, 3/3 trích dẫn khớp nguyên văn | Quy tắc 11 |
