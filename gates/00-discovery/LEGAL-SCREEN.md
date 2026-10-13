@@ -73,3 +73,16 @@ ghi log nội dung cửa sổ ra đĩa.
 ECC **không có** năng lực pháp lý nào — đã soát 2026-10-11
 (`grep -rilE 'copyright|legal review|takedown|dmca'` chỉ trả về vài file LICENSE và một skill
 tra USPTO). Nên mục này là tự dựng, và **chưa qua luật sư nào**.
+
+---
+
+## ĐÍNH CHÍNH 2026-10-13 — screenpipe: ĐÃ KIỂM, và câu trả lời là KHÔNG
+
+`LICENSE.md`: **"Screenpipe Commercial License — Copyright (c) 2024-2026 Negentropy Labs,
+Inc. (dba Screenpipe). All rights reserved."** §5 liệt kê *"Prohibited Without a Commercial
+License"*.
+
+**Không phải MIT. Không "MIT-ish". Không chép một dòng nào.** Bảng tín hiệu AX phải tự dò
+lại — cộng công việc thật vào S2/S3. Đọc để học thì được.
+
+Món nợ ở §3 bản trên: **đã trả, kết quả là cấm.**

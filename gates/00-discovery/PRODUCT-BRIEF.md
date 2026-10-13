@@ -108,3 +108,84 @@ Codex đã huỷ 2026-10-10.
 Hai kết luận quan trọng nhất của S0 **không** đến từ research mà đến từ **đọc nguồn gốc**:
 giấy phép (đọc thẳng file `LICENSE`) và điểm chèn `shouldConsiderActionEvent` (đọc thẳng code).
 Ở cả hai chỗ, hai mũi research đã lệch nhau và nguồn gốc giải quyết được.
+
+---
+
+# ĐÍNH CHÍNH — 2026-10-13, sau vòng phản bác
+
+> Quy tắc 14: không sửa tại chỗ. Mục này ghi đè các kết luận ở trên.
+> Nguồn: vòng phản bác của chính workflow S0 — **tự kiểm phía tác giả, cùng vendor cùng
+> priors, không có verifier bên ngoài nào chạy.**
+
+## Đ1 — screenpipe KHÔNG phải MIT. Nó là giấy phép THƯƠNG MẠI. ⛔
+
+`LICENSE.md` của screenpipe, nguyên văn:
+> "# Screenpipe Commercial License / Copyright (c) 2024-2026 Negentropy Labs, Inc.
+> (dba Screenpipe). All rights reserved." — §5 *"Prohibited Without a Commercial License"*
+
+**Hệ quả:** bảng profile per-platform mà bản trên gọi là *"món quà lớn nhất cho S2"* **không
+chép được một dòng nào.** Mũi research mô tả nó là "MIT-ish" — *-ish* không phải một giấy
+phép, và lần này nó sai hẳn. Bảng tín hiệu AX phải **tự dò lại từ đầu**, cộng thêm công việc
+thật vào S2/S3. Đọc screenpipe để **học** thì được; chép thì không.
+
+## Đ2 — Cờ camera KHÔNG đọc được trong App Sandbox. Và nó hỏng theo kiểu tệ nhất.
+
+Phép đo có đối chứng: trong App Sandbox với **đúng** bộ entitlement của MeetingBar, CMIO trả
+về **0 camera** — `OSStatus=0`, `size=0`. **API không chết, nó trả rỗng.**
+
+```
+   ⇒ code chạy, không crash, không log lỗi, và LUÔN kết luận "chưa join".
+      Một cổng presence luôn mở — tức là không có cổng nào.
+```
+
+Phép đo của tôi ở trên (`authorizationStatus=0` trước và sau) chạy trên binary **không**
+sandbox, nên nó đúng nhưng **không áp dụng được cho app sandbox**.
+
+**Điều này làm Quyết định A ĐÚNG HƠN, không sai đi:** phương án dự phòng *"giữ sandbox, chịu
+detect thô"* vừa bị đo là chết. Không còn đường lùi về sandbox nữa.
+
+## Đ3 — Bằng chứng nhu cầu: bảng ở trên có ba lỗi, tôi đã nói quá
+
+| Tôi viết | Thực tế |
+|---|---|
+| "chỉ **2** issue trong 541" | **≥3** — bỏ sót [#628](https://github.com/leits/MeetingBar/issues/628) *"Meeting bar opens meetings multiple times"* (2023-06-22) |
+| "#714 có 0 reaction ⇒ gần như không ai quan tâm" | **Thiếu base rate.** Trong cohort 106 issue năm 2024: **37% có đúng 0 reaction**. #714 nằm ở **mode** của phân phối, không phải ngoại lệ. Kết luận cũ là suy diễn xa hơn nguồn |
+| "3 người downgrade để lấy lại auto-join" (cụm workaround ngược hướng) | **Sai do cắt trích dẫn.** shimonacarvalho tự rút lại trong **cùng một comment**: *"Going to downgrade. Oh wait I see a 'Show a fullscreen notification' on the general tab."* |
+
+**Kết luận sau đính chính:** bằng chứng vẫn **mỏng**, nhưng *"gần như ngứa của riêng Duy"* là
+**nói quá**. Câu đúng: *ba người lạ đã báo cáo nó; không ai vận động cho nó; upstream đã từ
+chối.* Điều đó vẫn đủ để chọn công cụ-cá-nhân thay vì sản phẩm — nhưng vì **upstream đóng
+cửa**, không phải vì **không ai đau**.
+
+## Đ4 — Hai đính chính kỹ thuật nhỏ hơn
+
+- `com.apple.security.accessibility` **không tồn tại như một entitlement**. Apple DTS (Quinn),
+  thread 805556: *"It isn't a thing."* Kết luận "AX không chạy trong sandbox" vẫn đúng, nhưng
+  lý do tôi viết thì sai.
+- MeetingBar có **hai** dialog quyền, không phải một: nó gọi
+  `requestAuthorization(options: [.alert, .badge, .sound])` — không phải `.provisional` — nên
+  có thêm prompt thông báo. Đường cơ sở UX ở trên lệch một dialog.
+
+## Đ5 — Điểm mù chung, và nó trúng đúng chỗ Duy đã chỉ ra
+
+Phản bác tự tìm ra, độc lập với tôi:
+
+> *"CẢ HAI ĐỀU ĐỔI CÂU HỎI CỦA DUY LẤY MỘT CÂU DỄ ĐO HƠN — và không ai nói ra là đã đổi.
+> Duy hỏi: 'máy này đã join ĐÚNG cuộc họp NÀY chưa?' Cả hai phiên trả lời: 'có thiết bị media
+> nào đang chạy không?'"*
+
+**Quyết định B của Duy (2026-10-13) chính là phát hiện này, nói trước bằng tiếng người.**
+Mọi thiết kế từ đây phải trả lời câu hỏi **danh tính cuộc họp**, không được lặng lẽ hạ cấp
+xuống câu hỏi hiện diện.
+
+## Đ6 — Một điểm mù mới, chưa ai trong xưởng tính tới
+
+Phản bác đặt câu hỏi không ai hỏi: **"issue này do NGƯỜI viết hay do MODEL viết?"**
+
+- Reaction `+1` trên #889 đến từ `dosubot[bot]`, thả **4 giây** sau khi issue được tạo.
+- Hai issue của `stenoai` — nguồn cho hai phát hiện ở bản trên — có dấu hiệu sinh bằng model.
+- `ZoomStat` được bản trên tôn lên là *"điều tra thực địa trong một cuộc họp thật"*; metadata
+  repo **không chống đỡ được** mô tả đó.
+
+**⇒ "Bằng chứng cộng đồng" năm 2026 có thể là output của model khác.** Chưa có cách lọc. Ghi
+vào đây để các stage sau không xây lên nó.
