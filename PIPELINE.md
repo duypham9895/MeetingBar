@@ -32,3 +32,5 @@ Bảng định tuyến: `../docs/stages.md`.
 | 2026-10-13 | **Quyết định A** — phân phối: **(b) vài đồng nghiệp, Duy tự đưa file** | Bỏ App Store ⇒ bỏ sandbox ⇒ Accessibility API dùng được. Đây là thứ duy nhất mở khoá Zoom + Teams |
 | 2026-10-13 | **Quyết định B** — chính sách false-positive: **detect thấy đang ở trong ĐÚNG cuộc họp sắp nhắc ⇒ im hẳn**, không notify | Duy chỉ định. Lưu ý hệ quả ở PRODUCT-BRIEF §Hệ quả của Quyết định B |
 | 2026-10-13 | Gửi PR upstream bị LOẠI khỏi bảng phương án | Maintainer đã đóng issue #664 với lý do "intended behavior" |
+| 2026-10-13 | **Quyết định C** — không setup, app tự detect, Duy không chạy lệnh nào | Duy chỉ định. Hệ quả: AppleScript/Automation bị loại (4 trình duyệt = 4 dialog); kiến trúc chốt AX-only. Sàn còn lại: 1 toggle Accessibility, 1 lần |
+| 2026-10-13 | Đo tại chỗ: Zoom CÓ phơi AXWindow; menu `Meeting` KHÔNG có lúc idle; AX đọc được AXURL của Chrome/Brave/Vivaldi | Dứt điểm tranh cãi screenpipe↔ZoomStat bằng phép đo, không bằng trọng tài (Quy tắc 12). screenpipe sai ở cả hai điểm |

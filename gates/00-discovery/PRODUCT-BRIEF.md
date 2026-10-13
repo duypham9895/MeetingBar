@@ -189,3 +189,57 @@ Phản bác đặt câu hỏi không ai hỏi: **"issue này do NGƯỜI viết 
 
 **⇒ "Bằng chứng cộng đồng" năm 2026 có thể là output của model khác.** Chưa có cách lọc. Ghi
 vào đây để các stage sau không xây lên nó.
+
+---
+
+# ĐO TẠI CHỖ — 2026-10-13, tự chạy trên máy Duy
+
+> Duy: *"tôi kh muốn phải chạy bất cứ lệnh nào… tôi kh cần làm gì hết"* (2026-10-13).
+> ⇒ **Quyết định C.** Mọi phép đo từ đây do Claude tự chạy. Và nó là một yêu cầu sản
+> phẩm, không chỉ một lời từ chối — xem §Hệ quả của Quyết định C.
+
+Máy: macOS 26.5.1 (25F80) · Zoom 7.1.9 · Chrome/Brave/Vivaldi/Safari cùng cài.
+
+| # | Câu hỏi | Kết quả đo | Trạng thái trước đó |
+|---|---|---|---|
+| 1 | **AX có đọc được URL tab trình duyệt không?** | **CÓ.** `AXWebArea → AXURL` trả URL đầy đủ trên **Chrome, Brave, Vivaldi**, kèm `AXTitle` | chưa ai đo |
+| 2 | Zoom có phơi `AXWindow` không? | **CÓ.** `AXWindows=1`, title `"Zoom Workplace"`, `AXStandardWindow` | screenpipe nói KHÔNG → **SAI** |
+| 3 | Menu `Meeting` của Zoom có mặt lúc idle? | **KHÔNG.** Chỉ 5 menu: Apple · Zoom Workplace · Edit · Window · Help | screenpipe bỏ tín hiệu này vì "it exists even when Zoom is idle" → **SAI**, nên nó DÙNG ĐƯỢC |
+| 4 | `CptHost` lúc idle? | **KHÔNG.** `caphost` thì **CÓ** (pid sinh cùng lúc với zoom.us) | khớp |
+| 5 | Cờ camera đọc được không cần quyền? | **CÓ** ngoài sandbox — `authorizationStatus=0` trước và sau, `OSStatus=0` | — |
+| 6 | …trong App Sandbox? | **KHÔNG.** Trả rỗng, không lỗi → hỏng im lặng (xem Đ2) | — |
+
+**Còn đúng MỘT câu chưa đo được:** tiêu đề cửa sổ Zoom **khi đang trong cuộc họp** có mang
+meeting ID không. Cần một cuộc họp thật. Lúc idle là `"Zoom Workplace"`.
+
+## Hệ quả của Quyết định C — nó loại bỏ một nhánh thiết kế
+
+Quyết định C (*không setup, app tự chạy*) + **4 trình duyệt cùng cài trên máy Duy**:
+
+```
+   AppleScript / Automation   1 dialog cho MỖI cặp (app → trình duyệt)
+                              Chrome + Safari + Brave + Vivaldi = 4 dialog, + System Events
+                              ⇒ VI PHẠM Quyết định C
+
+   Accessibility (AX)         1 toggle, MỘT lần, phủ MỌI trình duyệt VÀ mọi app họp
+                              ⇒ và phép đo #1 chứng minh nó đủ mạnh để thay AppleScript
+```
+
+⇒ **Kiến trúc chốt: AX-only. AppleScript bị loại khỏi bảng phương án.** Đây không phải sở
+thích kỹ thuật — nó suy ra trực tiếp từ yêu cầu của Duy, và được một phép đo chống đỡ.
+
+**Ngoại lệ duy nhất của "không cần làm gì", phải nói thẳng:** Accessibility cần **một** lần
+bật trong System Settings ở lần chạy đầu. Không có đường vòng — macOS không cho app nào đọc
+UI của app khác mà không có nó. Nhánh thật sự zero-permission (cờ camera) **không trả lời
+được "họp NÀO"**, nên không phục vụ được Quyết định B.
+
+```
+   Sàn không hạ được nữa:  MỘT toggle · MỘT lần · lần chạy đầu tiên.
+```
+
+## Ghi chú về screenpipe — mất nó rẻ hơn tưởng
+
+Hai trong các tín hiệu cốt lõi của screenpipe vừa **đo ra là sai** trên Zoom 7.1.9/macOS 26.
+Cộng với Đ1 (giấy phép thương mại, cấm chép), kết luận: bảng profile đó **không phải món quà
+bị mất, mà là một thứ đằng nào cũng phải viết lại và kiểm lại.** Chi phí của Đ1 thấp hơn
+bản trên ước tính.
