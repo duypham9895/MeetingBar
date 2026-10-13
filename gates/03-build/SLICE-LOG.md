@@ -271,3 +271,69 @@ nó hỏng mà không kêu, và *"không im"* trông y hệt *"chưa tới lúc 
 giờ bắn **đã qua** thì không có Task nào — nó rơi sang đường quét bù `fireDueActions`, vốn
 chỉ chạy ở một số thời điểm. Ba vòng test đầu của tôi thất bại một phần vì lý do này. Muốn
 test đường hẹn giờ thì **app phải đang chạy TRƯỚC khi sự kiện được tạo**.
+
+---
+
+## Lát 7 — TẦNG 2: app họp native ✅
+
+**Ngày:** 2026-10-13 khuya · Duy hỏi: *"tại sao kh hoàn thiện ở các app meeting khác ngoài
+meeting via browser"*
+
+### Vì sao nó từng bị dừng — và đó không phải bỏ dở
+
+Đo lúc 21:18 trên một cuộc Zoom **cá nhân (PMI)**: tiêu đề cửa sổ là `"Duy Pham's Zoom Meeting"`,
+và meeting ID (`\d{9,11}`) **không xuất hiện ở bất kỳ đâu** trong cây AX. Quyết định B đòi khớp
+**danh tính**; Tầng 2 lúc đó chỉ chứng minh được **hiện diện**. Hạ chuẩn xuống "hiện diện là đủ"
+là sửa quyết định của Duy sau lưng anh, nên tôi dừng và ghi lại thay vì ship.
+
+### Thứ mở khoá nó: tiêu đề cửa sổ CHÍNH LÀ chủ đề cuộc họp
+
+Mở dialog **Schedule meeting** của Zoom và đọc trường `Topic`:
+
+```
+dialog đặt lịch, Topic (giá trị mặc định)   = "Duy Pham's Zoom Meeting"
+cuộc họp đang chạy lúc 21:18, AXTitle       = "Duy Pham's Zoom Meeting"
+                                               ▲ cùng một chuỗi, hai vai trò
+```
+
+⇒ `"Duy Pham's Zoom Meeting"` **không phải chuỗi cứng của Zoom** — nó là **chủ đề** của phòng
+cá nhân. Một cuộc họp đặt lịch mang chủ đề riêng sẽ hiện chủ đề đó. Vậy danh tính khớp được,
+chỉ là khớp bằng **chủ đề ↔ tiêu đề sự kiện lịch**, không bằng meeting ID.
+
+### Thay đổi
+
+| File | Việc |
+|---|---|
+| `Presence/MeetingContext.swift` | **mới** — cổng nay mang cả `room` lẫn `eventTitle`. Hai nguồn nhận dạng khác bản chất: trình duyệt khớp **chính xác** bằng mã phòng, app native khớp **mờ** bằng chủ đề |
+| `Presence/AXMeetingSource.swift` | **mới** — quét cửa sổ Zoom/Teams/Webex/Slack qua AX, khớp tiêu đề |
+| `Presence/PresenceGate.swift` | `PresenceSource` nhận `MeetingContext`; mặc định có cả hai tầng |
+| `NotificationActionRunner.swift` | truyền `event.title` vào cổng |
+
+### Ba quyết định thiết kế, mỗi cái có lý do đo được
+
+1. **`AXMeetingSource` KHÔNG BAO GIỜ trả `.absent`** — kể cả khi thấy Zoom đang chạy mà không
+   cửa sổ nào khớp. MuteDeck đã trả giá đúng chỗ này: detect của họ phụ thuộc setting
+   *"Always show meeting controls"* của chính Zoom. Một `.absent` sai sẽ **phủ quyết** một
+   `.present` đúng từ Tầng 1.
+2. **Khớp mờ hai chiều, sàn 8 ký tự.** Zoom cắt chủ đề dài; người tổ chức thêm tiền tố
+   (`[Only Reminder]`, `Re:`). Khớp chính xác quá chặt, khớp theo từ rời quá lỏng. Dưới 8 ký tự
+   thì `"Họp"` khớp `"Họp tuần"` — đã có test chặn.
+3. **Chuẩn hoá NFC bắt buộc.** `"Họp Đầu Tuần"` ở NFC và NFD là hai chuỗi khác nhau, mà bộ gõ
+   tiếng Việt phát ra cả hai. Có test dùng đúng hai dạng đó.
+
+### Đã kiểm
+
+```
+AXTitleMatchTests  5/5   khớp chính xác · cắt bớt · tiền tố · NFC↔NFD · hoa thường
+                         + TỪ CHỐI chuỗi ngắn và chuỗi không liên quan
+toàn suite         0 failures
+```
+
+### Chưa xác minh được
+
+- **Chưa quan sát một cuộc Zoom ĐẶT LỊCH với chủ đề tuỳ chỉnh đang chạy.** Kết luận
+  "tiêu đề = chủ đề" là **suy ra từ hai quan sát cùng một chuỗi**, không phải từ một phép thử
+  trực tiếp với chủ đề do tôi đặt. Đó là một suy luận mạnh, không phải một phép đo.
+- **Teams và Webex không cài trên máy Duy** — danh sách `meetingApps` và `notAMeeting` cho hai
+  app đó là **phỏng đoán theo khuôn của Zoom**, chưa ai thấy cây AX thật của chúng.
+- Tầng 2 cần quyền **Accessibility**. Chưa cấp ⇒ `.unknown`, im lặng lùi về Tầng 1 (Quyết định D-1).

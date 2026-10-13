@@ -52,7 +52,7 @@ final class RoomIdentityTests: XCTestCase {
 
 private struct StubSource: PresenceSource {
     let verdict: Presence
-    func presence(for _: RoomIdentity, window _: TimeInterval, now _: Date) -> Presence { verdict }
+    func presence(for _: MeetingContext, window _: TimeInterval, now _: Date) -> Presence { verdict }
 }
 
 final class PresenceGateMergeTests: XCTestCase {
@@ -60,7 +60,7 @@ final class PresenceGateMergeTests: XCTestCase {
 
     private func suppress(_ sources: [Presence]) -> Bool {
         PresenceGate(sources: sources.map { StubSource(verdict: $0) }, window: 900)
-            .shouldSuppress(url: url).suppress
+            .shouldSuppress(url: url, eventTitle: "Họp tuần").suppress
     }
 
     func testSilenceNeedsAtLeastOnePresentAndNoAbsent() {
@@ -84,8 +84,11 @@ final class PresenceGateMergeTests: XCTestCase {
     /// Link không rút được danh tính phòng thì cổng không có gì để so — phải MỞ,
     /// không được im "cho chắc".
     func testUnparseableLinkOpens() {
+        // /home không rút được mã phòng VÀ không có tiêu đề ⇒ không có gì để nhận dạng.
         let gate = PresenceGate(sources: [StubSource(verdict: .present(source: "a"))], window: 900)
-        XCTAssertFalse(gate.shouldSuppress(url: URL(string: "https://meet.google.com/home")!).suppress)
+        XCTAssertFalse(
+            gate.shouldSuppress(url: URL(string: "https://meet.google.com/home")!, eventTitle: "")
+                .suppress)
     }
 }
 
@@ -116,7 +119,7 @@ final class PresenceGateWiringTests: XCTestCase {
     private func makeRunner(suppress: Bool) -> (NotificationActionRunner, FakeNotificationActionSink) {
         let sink = FakeNotificationActionSink()
         let runner = NotificationActionRunner(actionSink: sink)
-        runner.presenceGate = { _ in (suppress, suppress ? "test: đã vào" : "test: chưa vào") }
+        runner.presenceGate = { _, _ in (suppress, suppress ? "test: đã vào" : "test: chưa vào") }
         return (runner, sink)
     }
 
@@ -168,5 +171,47 @@ final class PresenceGateWiringTests: XCTestCase {
         XCTAssertTrue(
             Defaults[.processedEventsForAutoJoin].contains { $0.id == "R" },
             "im lặng rồi mà không ghi processed ⇒ vòng lặp đánh giá mỗi tick")
+    }
+}
+
+
+// MARK: - Tầng 2: khớp danh tính app native bằng CHỦ ĐỀ
+
+final class AXTitleMatchTests: XCTestCase {
+    private func m(_ win: String, _ evt: String) -> Bool {
+        AXMeetingSource.titlesMatch(
+            windowTitle: MeetingContext.normalize(win),
+            eventTitle: MeetingContext.normalize(evt))
+    }
+
+    /// Tiêu đề cửa sổ Zoom CHÍNH LÀ chủ đề cuộc họp — đo được 2026-10-13.
+    func testExactAndTruncatedTopicsMatch() {
+        XCTAssertTrue(m("Weekly Product Sync", "Weekly Product Sync"))
+        XCTAssertTrue(m("Weekly Product Sync", "Weekly Product Sync - Ringkas"))  // lịch có hậu tố
+        XCTAssertTrue(m("[Only Reminder] UAT session", "UAT session"))            // lịch có tiền tố
+    }
+
+    /// NFC: bộ gõ tiếng Việt phát ra cả NFC lẫn NFD. Cùng tên nhìn thấy, khác byte.
+    func testVietnameseNFCvsNFD() {
+        let nfc = "Họp Đầu Tuần".precomposedStringWithCanonicalMapping
+        let nfd = "Họp Đầu Tuần".decomposedStringWithCanonicalMapping
+        XCTAssertNotEqual(nfc.unicodeScalars.count, nfd.unicodeScalars.count, "mẫu thử phải thật sự khác dạng")
+        XCTAssertTrue(m(nfd, nfc))
+        XCTAssertTrue(m(nfc, nfd))
+    }
+
+    func testCaseAndWhitespaceInsensitive() {
+        XCTAssertTrue(m("  WEEKLY   PRODUCT  SYNC ", "weekly product sync"))
+    }
+
+    /// Chuỗi ngắn trùng nhau quá dễ — phải từ chối, nếu không cổng sẽ im nhầm.
+    func testShortTitlesDoNotMatch() {
+        XCTAssertFalse(m("Họp", "Họp tuần"))
+        XCTAssertFalse(m("Sync", "Daily Sync"))
+    }
+
+    func testUnrelatedTitlesDoNotMatch() {
+        XCTAssertFalse(m("Zoom Workplace", "Weekly Product Sync"))
+        XCTAssertFalse(m("Interview — Backend", "Weekly Product Sync"))
     }
 }

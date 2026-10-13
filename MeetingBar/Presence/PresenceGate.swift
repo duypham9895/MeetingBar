@@ -22,12 +22,14 @@ enum Presence: Equatable, Sendable {
 }
 
 protocol PresenceSource: Sendable {
-    func presence(for room: RoomIdentity, window: TimeInterval, now: Date) -> Presence
+    func presence(for context: MeetingContext, window: TimeInterval, now: Date) -> Presence
 }
 
 /// TẦNG 1 — lịch sử trình duyệt. Zero permission.
 struct BrowserHistorySource: PresenceSource {
-    func presence(for room: RoomIdentity, window: TimeInterval, now: Date) -> Presence {
+    func presence(for context: MeetingContext, window: TimeInterval, now: Date) -> Presence {
+        // Không rút được mã phòng ⇒ tầng này không có thẩm quyền. KHÔNG phải "chưa vào".
+        guard let room = context.room else { return .unknown }
         let visits = BrowserHistoryStore.roomVisits(since: now.addingTimeInterval(-window))
         if let hit = visits.first(where: { $0.room == room }) {
             return .present(source: "history:\(hit.browser)")
@@ -50,7 +52,10 @@ struct PresenceGate: Sendable {
     /// nên cổng phải quyết nhanh hơn thế nhiều bậc.
     static let budget: TimeInterval = 0.150
 
-    init(sources: [PresenceSource] = [BrowserHistorySource()], window: TimeInterval) {
+    init(
+        sources: [PresenceSource] = [BrowserHistorySource(), AXMeetingSource()],
+        window: TimeInterval
+    ) {
         self.sources = sources
         self.window = window
     }
@@ -62,21 +67,25 @@ struct PresenceGate: Sendable {
     /// Mọi trường hợp còn lại ⇒ MỞ, tức hành xử y hệt MeetingBar gốc.
     /// **Thất bại luôn MỞ.** Mở thừa một tab là cái giá đúng bằng hiện trạng
     /// hôm nay; im nhầm là lỡ họp và không hồi phục được.
-    func shouldSuppress(url: URL, now: Date = Date()) -> (suppress: Bool, reason: String) {
-        guard let room = RoomIdentityParser.parse(url) else {
-            return (false, "không rút được danh tính phòng từ link")
+    func shouldSuppress(
+        url: URL, eventTitle: String = "", now: Date = Date()
+    ) -> (suppress: Bool, reason: String) {
+        let ctx = MeetingContext(room: RoomIdentityParser.parse(url), eventTitle: eventTitle)
+        if ctx.room == nil, MeetingContext.normalize(eventTitle).isEmpty {
+            return (false, "không có mã phòng lẫn tiêu đề để nhận dạng")
         }
         let deadline = Date().addingTimeInterval(Self.budget)
         var present: String?
         for s in sources {
             if Date() > deadline { return (false, "quá ngân sách \(Int(Self.budget * 1000))ms") }
-            switch s.presence(for: room, window: window, now: now) {
+            switch s.presence(for: ctx, window: window, now: now) {
             case .absent(let src): return (false, "bị phủ quyết bởi \(src)")
             case .present(let src): present = present ?? src
             case .unknown: continue
             }
         }
-        guard let src = present else { return (false, "không nguồn nào thấy \(room.key)") }
-        return (true, "đã vào \(room.key) — \(src)")
+        let what = ctx.room?.key ?? "\"\(eventTitle)\""
+        guard let src = present else { return (false, "không nguồn nào thấy \(what)") }
+        return (true, "đã vào \(what) — \(src)")
     }
 }
