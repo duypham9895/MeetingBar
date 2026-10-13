@@ -1,9 +1,11 @@
 // Chép file này thành XCConfig/GoogleOAuth.xcconfig rồi điền giá trị thật.
 // Bản .xcconfig (không có .example) đã nằm trong .gitignore.
 //
-// CLIENT_NUMBER là phần SỐ ở đầu client ID, KHÔNG gồm ".apps.googleusercontent.com".
-//   client ID đầy đủ:  123456789012-abcdefg.apps.googleusercontent.com
-//   điền vào đây:      123456789012-abcdefg
+// CLIENT_NUMBER: dán cách nào cũng được — code tự cắt đuôi thừa.
+//   Console đưa:   123456789012-abcdefg.apps.googleusercontent.com
+//   dán nguyên     ✓  (được, code tự cắt)
+//   hoặc gọn       ✓  123456789012-abcdefg
+// (Trước đây dán nguyên sẽ ra `401 invalid_client` vì đuôi bị nối hai lần.)
 //
 // Cách lấy: docs/GOOGLE-OAUTH-SETUP.md
 

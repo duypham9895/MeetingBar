@@ -35,7 +35,26 @@ enum GoogleOAuthConfig {
         return trimmed
     }
 
-    static var clientNumber: String? { plistValue("GOOGLE_CLIENT_NUMBER") }
+    /// Đuôi mà Google gắn vào Client ID đầy đủ. Code dựng `kClientID` bằng cách
+    /// TỰ NỐI đuôi này, nên nếu người cấu hình dán nguyên Client ID từ Console thì
+    /// nó bị nối hai lần:
+    ///
+    ///     1022665186541-abc.apps.googleusercontent.com.apps.googleusercontent.com
+    ///                        └──── của người dùng ────┘└──── code tự nối ────────┘
+    ///
+    /// Google trả `401 invalid_client — The OAuth client was not found`, một câu
+    /// chỉ thẳng vào "credential sai" và không hề gợi ý rằng nó chỉ bị thừa đuôi.
+    /// **Đã xảy ra thật, 2026-10-13.** Hướng dẫn có ghi "bỏ đuôi" cũng không cứu được:
+    /// dán nguyên cái Console đưa cho là phản xạ đúng của con người.
+    private static let clientIDSuffix = ".apps.googleusercontent.com"
+
+    /// Phần SỐ của Client ID. Chấp nhận **cả hai** dạng người ta hay dán.
+    static var clientNumber: String? {
+        guard let raw = plistValue("GOOGLE_CLIENT_NUMBER") else { return nil }
+        guard raw.hasSuffix(clientIDSuffix) else { return raw }
+        let trimmed = String(raw.dropLast(clientIDSuffix.count))
+        return trimmed.isEmpty ? nil : trimmed
+    }
     static var clientSecret: String? { plistValue("GOOGLE_CLIENT_SECRET") }
 
     /// `true` chỉ khi CẢ HAI giá trị có thật **và** redirect URI dựng ra là URL hợp lệ.
