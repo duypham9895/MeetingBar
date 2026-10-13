@@ -318,3 +318,44 @@ Tôi ghi lại để anh bác, không phải để tôi lờ đi.
 > Dự án này lấy thời gian từ đâu? Còn **5 cuối tuần** đến 15/11, và `noelroom` đã nhận cam kết.
 
 Chưa trả lời. Thuộc về Duy.
+
+---
+
+# QUYẾT ĐỊNH D — 2026-10-13: làm CẢ HAI tầng
+
+Duy chọn **Tầng 1 + Tầng 2**, bác khuyến nghị "Tầng 1 một mình" của PM. Ghi lại cả khuyến
+nghị lẫn việc nó bị bác, vì sáu tuần nữa câu *"sao hồi đó không làm gọn hơn?"* phải trả lời
+được.
+
+## Hai hệ quả PM tự quyết (Duy bác được)
+
+**D-1 · Tầng 2 BẬT mặc định, xin Accessibility ở lần chạy đầu, từ chối thì âm thầm lùi về
+Tầng 1.** Quyết định C (*không setup*) và Quyết định D (*cả hai tầng*) căng nhau ở đúng một
+điểm: Tầng 2 cần một toggle. Cách gỡ ít ma sát nhất là hỏi **một lần, lúc cài**, rồi không
+bao giờ hỏi lại — và nếu người dùng từ chối thì app vẫn chạy đúng 97% ca mà không kêu ca.
+Opt-in-mặc-định-tắt sẽ vi phạm *"app phải tự detect"*.
+
+**D-2 · Tầng 1 là lát cắt dọc đầu tiên ở S3, Tầng 2 là lát thứ hai.** Không phải vì nó quan
+trọng hơn — mà vì nó **kiểm chứng được ngay** trên dữ liệu thật đã có (96 lượt/30 ngày), còn
+Tầng 2 thì không (xem dưới).
+
+## Rủi ro mới mà Quyết định D tạo ra: KHÔNG KIỂM THỬ ĐƯỢC TẦNG 2
+
+Tầng 2 nhắm vào app native. Trên máy Duy, 2026-10-13:
+
+| | Cài đặt? | Số cuộc / 30 ngày |
+|---|---|---|
+| Zoom | có | **0** |
+| Teams | **không** (chỉ còn driver âm thanh sót) | 1 |
+| Webex | **không** | 1 |
+
+⇒ **Không có cuộc họp thật nào để kiểm Tầng 2.** S4 đòi *"xác minh bằng mắt, không suy ra từ
+đọc code"* — với Tầng 2 thì yêu cầu đó hiện **không thoả được** bằng dữ liệu tự nhiên.
+
+Ba đường, phải chốt ở S1 chứ không phải phát hiện ở S4:
+1. Tự dựng cuộc họp thử (Zoom cá nhân solo + cài Teams để test) — tốn công, nhưng là cách
+   duy nhất thoả S4.
+2. Ship Tầng 2 kèm nhãn `chưa kiểm trên cuộc họp thật` trong `VERIFICATION.md`, bật sau.
+3. Hoãn Tầng 2 sang sau 15/11.
+
+**Chưa chọn.** Đây là câu hỏi của S1, không phải của S0.
