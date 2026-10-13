@@ -39,7 +39,7 @@ enum GoogleOAuthConfig {
     /// TỰ NỐI đuôi này, nên nếu người cấu hình dán nguyên Client ID từ Console thì
     /// nó bị nối hai lần:
     ///
-    ///     1022665186541-abc.apps.googleusercontent.com.apps.googleusercontent.com
+    ///     000000000000-abc.apps.googleusercontent.com.apps.googleusercontent.com
     ///                        └──── của người dùng ────┘└──── code tự nối ────────┘
     ///
     /// Google trả `401 invalid_client — The OAuth client was not found`, một câu
