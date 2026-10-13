@@ -16,7 +16,7 @@ cuộc họp sắp tới chưa, và im lặng nếu đã ở trong đó.
 |---|---|---|---|---|
 | S0 | Discovery | pass (chờ /vibe:approve) | `gates/00-discovery/PRODUCT-BRIEF.md` · `LEGAL-SCREEN.md` | |
 | S1 | PRD | in-progress | `gates/01-spec/PRD.md` · `ACCEPTANCE.md` · `SUCCESS-CRITERIA.md` · `TRACKING-PLAN.md` · `LEGAL-REVIEW.md` | |
-| S2 | Design | pending | `gates/02-design/` | |
+| S2 | Design | in-progress (mở lại) | `gates/02-design/` | |
 | S3 | Build | pending | `gates/03-build/SLICE-LOG.md` + commit `feat:` + `licences.json` | |
 | S4 | QA | pending | `gates/04-qa/VERIFICATION.md` · `REVIEW.md` · `EVENT-VERIFICATION.md` | |
 | S5 | Launch | pending | `gates/05-launch/LAUNCH-READINESS.md` · `POSITIONING.md` · đường gỡ | |
@@ -44,3 +44,4 @@ Bảng định tuyến: `../docs/stages.md`.
 | 2026-10-13 | **Bất đồng [3] thứ tự Tầng 2: CHƯA GIẢI — leo lên Duy** | Hai phòng đề nghị hoãn, PM đề nghị làm kèm cổng cứng. Câu spec chưa rõ: Quyết định D ràng buộc PHẠM VI hay ràng buộc cả THỨ TỰ? Không ép đồng thuận (Quy tắc 12) |
 | 2026-10-13 | **Đo Zoom khi ĐANG HỌP** (Claude tự dựng phòng solo, không mời ai, ~20s rồi đóng): tiêu đề = `"Duy Pham's Zoom Meeting"`, **KHÔNG có meeting ID ở bất kỳ đâu trong cây AX**. `CptHost` không xuất hiện kể cả khi họp | Tầng 2 chứng minh được HIỆN DIỆN, chưa chứng minh được DANH TÍNH ⇒ chưa thoả Quyết định B. Không tự hạ chuẩn. Nhưng tôi đo ca PMI (không chủ đề); ca đáng đo là cuộc ĐẶT LỊCH, vốn mang chủ đề làm tiêu đề — nhánh đó còn sống, chưa đo |
 | 2026-10-13 | **Bất đồng [3] PM tự quyết thay vì chặn**: giữ nguyên phạm vi (Quyết định D), làm **Tầng 1 trước**, Tầng 2 chờ phép đo cuộc-Zoom-đặt-lịch | Duy: *"tiếp tục công việc, tại sao lại dừng"*. Quyết định D ràng buộc phạm vi, không ràng buộc thứ tự — nên xếp Tầng 2 sau không phải bác Duy |
+| 2026-10-13 | **MỞ LẠI S2.** Duy: *"redesign lại toàn bộ UIUX và app này phải có ngôn ngữ của tiếng Việt"* | Bản `N/A` cũ đúng với phạm vi "một tính năng vô hình", sai với phạm vi "toàn bộ app". Đo: 355 chuỗi · 23 ngôn ngữ không có `vi` · 24 file UI. Kéo theo một mâu thuẫn ONE-PAGER §2 phải gỡ |
