@@ -191,6 +191,16 @@ enum AppLanguage: String, Defaults.Serializable, Codable {
     case slovak = "sk"
     case dutch = "nl"
     case vietnamese = "vi"
+
+    // presence-gate: sáu ngôn ngữ dưới đây ĐÃ CÓ bản dịch đầy đủ trên đĩa
+    // (341–342 khoá mỗi thứ) nhưng không có case nào trong enum, nên người
+    // dùng KHÔNG CHỌN ĐƯỢC. Công sức dịch nằm trong repo và chưa ai dùng được.
+    case bulgarian = "bg"
+    case korean = "ko"
+    case tamil = "ta"
+    case chineseSimplified = "zh-Hans"
+    case hungarian = "hu"
+    case portugueseEU = "pt"
 }
 
 struct Browser: Defaults.Serializable, Codable, Hashable, Sendable {

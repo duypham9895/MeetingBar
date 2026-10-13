@@ -208,6 +208,15 @@ struct LaunchAtLoginANDPreferredLanguagePicker: View {
                     // presence-gate: Group của SwiftUI chỉ nhận 10 con. Group thứ nhất
                     // đã đủ 10, nên tiếng Việt vào Group thứ hai (đang có 6).
                     Text("Tiếng Việt").tag(AppLanguage.vietnamese)
+                    Text("Português (PT)").tag(AppLanguage.portugueseEU)
+                    Text("中文（简体）").tag(AppLanguage.chineseSimplified)
+                }
+                // Group thứ ba: SwiftUI chỉ nhận 10 con mỗi Group.
+                Group {
+                    Text("한국어").tag(AppLanguage.korean)
+                    Text("Български").tag(AppLanguage.bulgarian)
+                    Text("Magyar").tag(AppLanguage.hungarian)
+                    Text("தமிழ்").tag(AppLanguage.tamil)
                 }
             }
         }

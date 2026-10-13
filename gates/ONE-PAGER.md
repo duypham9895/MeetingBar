@@ -1,6 +1,6 @@
 ---
 owner: Duy (Edward Pham)
-freshness: 2026-10-13 (sửa §4 sau S1)
+freshness: 2026-10-13 (sửa §4 sau S1; sửa §2 sau S2)
 status: draft — CHƯA được Duy duyệt
 ---
 
@@ -70,3 +70,26 @@ lý do — không analytics, không mạng; xem file đó.
 **Vì sao G1 không thương lượng:** hai loại lỗi không đối xứng. Mở thừa một tab = đúng bằng
 hiện trạng hôm nay, giá bằng không. Im nhầm = **lỡ họp**, không hồi phục, và phát hiện ra lúc
 đã muộn.
+
+---
+
+## §2 — BẢN SỬA 2026-10-13, sau yêu cầu redesign UI/UX
+
+> Quy tắc 14: không sửa tại chỗ. Mục này đè lên §2 ở trên; bản cũ giữ nguyên để còn đọc
+> được lý do cũ. §2 cũ đã bị đọc sai một lần, và cái giá là `gates/02-design/N-A.md` —
+> một file kết luận *"sản phẩm không có bề mặt hình ảnh"* cho một app có 24 file UI,
+> 18.127 dòng Swift và 355 chuỗi hiển thị.
+
+§2 cũ viết *"mọi thứ hiện ra màn hình đều là một thất bại của thiết kế"*. Câu đó **đúng**,
+nhưng nó nói về **cổng presence**, không nói về **app chứa cổng**. Trộn hai thứ làm một là
+lý do S2 bị đánh N/A.
+
+| Đối tượng | Lời hứa |
+|---|---|
+| **Cổng presence** (một tính năng) | **Vô hình.** Thành công là người dùng không nhận ra nó tồn tại — cái tab thứ hai đơn giản không còn xuất hiện. Cổng tự mở một cửa sổ, một banner hay một âm thanh đều là thất bại thiết kế. **Quyết định B không đổi.** |
+| **App chứa nó** (thứ Duy mở mỗi ngày) | **Thuộc về người dùng Việt.** Nó nói tiếng Việt, mang tên của chính nó, và không bắt ai đọc tiếng Anh để biết cuộc họp tiếp theo lúc mấy giờ. Nó **lặng** — không tự đòi chú ý — nhưng lặng không có nghĩa là không được chạm vào. |
+
+**"Vô hình" là ràng buộc của MỘT TÍNH NĂNG, không phải giấy phép để app xấu, để app nói
+ngôn ngữ của người khác, hay để stage thiết kế bị bỏ qua.**
+
+*Ngắn có chủ đích: mọi câu thêm vào đây là một câu nữa có thể bị trích sai ở stage sau.*
