@@ -1,4 +1,9 @@
 //
+//  ĐÃ SỬA bởi dự án presence-gate (2026-10-13) so với bản gốc của
+//  Andrii Leitsius — thêm cổng presence trước side-effect của .autoJoin.
+//  Apache License 2.0 §4(b).
+//
+//
 //  NotificationActionRunner.swift
 //  MeetingBar
 //
@@ -107,6 +112,24 @@ final class NotificationActionRunner {
         else { return }
 
         if decision.shouldFireSideEffect {
+            // presence-gate: cổng đứng ĐÚNG Ở ĐÂY, không ở shouldConsiderActionEvent.
+            //
+            // Có hai đường tới fireAction và chỉ một đường đi qua
+            // shouldConsiderActionEvent: fireDueActions (polling). Đường còn lại,
+            // fire(plan:) ← NotificationScheduler, là đường HẸN GIỜ — tức ca
+            // thường gặp nhất — và nó KHÔNG gọi hàm đó. Đặt cổng ở trên là để
+            // nó bị đi vòng đúng lúc cần nhất.
+            if plan.kind == .autoJoin, let link = event.meetingLink?.url {
+                let gate = PresenceGate(window: Defaults[.presenceGateWindowSeconds])
+                let verdict = gate.shouldSuppress(url: link)
+                if verdict.suppress {
+                    // VẪN ghi processed. Nếu return sớm mà không ghi, evaluate
+                    // sẽ chạy lại với cùng lastModifiedDate ở mỗi tick và cổng
+                    // trở thành một vòng lặp đánh giá vô tận.
+                    recordStore.setProcessedRecords(decision.updatedProcessed, for: plan.kind)
+                    return
+                }
+            }
             guard actionSink?.performNotificationAction(plan.kind, event: event) == true else {
                 return
             }

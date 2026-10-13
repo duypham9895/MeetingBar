@@ -162,6 +162,14 @@ extension Defaults.Keys {
     static let processedEventsForAutoJoin = Key<[ProcessedEvent]>(
         "processedEventsForAutoJoin", default: [])
 
+    /// presence-gate: cửa sổ "đã vào phòng", giây.
+    ///
+    /// 900s đo ra trên 71 cuộc họp thật / 30 ngày: chặn 94% lượt bắn-trùng với
+    /// 0 lần im nhầm. 1800s chặn 100% nhưng vỡ cổng G1 (1 lần im nhầm ⇒ lỡ họp).
+    /// Đổi số này thì phải chạy lại `probe/backtest-presence-gate.py`.
+    static let presenceGateWindowSeconds = Key<Double>(
+        "presenceGateWindowSeconds", default: 900)
+
     static let joinEventScriptLocation = Key<URL?>("joinEventScriptLocation", default: nil)
     static let runJoinEventScript = Key<Bool>("runAppleScriptWhenJoiningEvent", default: false)
     static let joinEventScript = Key<String>(
