@@ -38,18 +38,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusLoopTask: Task<Void, Never>?
 
     func applicationDidFinishLaunching(_: Notification) {
-        // presence-gate: di cư TRƯỚC MỌI THỨ. Gỡ sandbox đổi chỗ UserDefaults, nên
-        // nếu không nhặt lại thì mọi phép đọc settings bên dưới đều đọc một kho trống
-        // — kể cả automaticEventJoin, tức chính tính năng dự án này tồn tại để sửa.
-        SandboxContainerMigration.runIfNeeded()
-
-        // presence-gate: tự chẩn đoán MỘT LẦN. Chế độ hỏng của cổng là im lặng
-        // theo cả hai nghĩa — nó hỏng mà không kêu. Dòng này là chỗ duy nhất
-        // phân biệt được "chưa tới lúc im" với "không bao giờ im được nữa".
-        PresenceLog.selfCheck()
         // When launched as a test host, skip the entire launch flow so tests
         // don't trigger onboarding, status bar setup, or calendar sync.
         guard !AppMessageCenter.shouldSuppressSystemUI() else { return }
+
+        // presence-gate: phải nằm SAU cái guard trên, và tôi đã đặt sai một lần.
+        //
+        // Đặt trước guard thì test host cũng chạy chúng, mà chúng làm I/O nặng:
+        // di cư đọc một plist rồi ghi ~38 khoá, và selfCheck CHÉP VÀ MỞ 5 database
+        // SQLite (History của Vivaldi một mình đã 27,9 MB). Test host làm xong
+        // chừng đó thì đã quá hạn bắt tay với test framework ⇒ toàn bộ suite chết
+        // với "The test runner hung before establishing connection" — 0 pass,
+        // 0 fail, không một dòng nào nói vì sao.
+        //
+        // Di cư vẫn phải đứng TRƯỚC mọi phép đọc settings: gỡ sandbox đổi chỗ
+        // UserDefaults, không nhặt lại thì automaticEventJoin rơi về false.
+        SandboxContainerMigration.runIfNeeded()
+
+        // Tự chẩn đoán MỘT LẦN. Chế độ hỏng của cổng im lặng theo cả hai nghĩa —
+        // nó hỏng mà không kêu, và "không im" trông y hệt "chưa tới lúc im".
+        PresenceLog.selfCheck()
 
         // presence-gate (Legal CHẶN §2.2): KHÔNG khởi động patronage.
         // Bản này được phát cho đồng nghiệp của Duy. Giữ nút ủng hộ là đẩy họ

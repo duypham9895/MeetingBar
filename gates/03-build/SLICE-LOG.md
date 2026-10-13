@@ -337,3 +337,34 @@ toàn suite         0 failures
 - **Teams và Webex không cài trên máy Duy** — danh sách `meetingApps` và `notAMeeting` cho hai
   app đó là **phỏng đoán theo khuôn của Zoom**, chưa ai thấy cây AX thật của chúng.
 - Tầng 2 cần quyền **Accessibility**. Chưa cấp ⇒ `.unknown`, im lặng lùi về Tầng 1 (Quyết định D-1).
+
+### 🚩 Lỗi tôi tự gây ra ở Lát 7, và cách nó biểu hiện
+
+Sau khi thêm Tầng 2, **toàn bộ test suite chết** với:
+
+```
+Testing failed: MeetingBar encountered an error
+                (The test runner hung before establishing connection.)
+0 pass · 0 fail · không một dòng nào nói vì sao
+```
+
+**Nguyên nhân: tôi đặt hai lời gọi SAI CHỖ.** `SandboxContainerMigration.runIfNeeded()` và
+`PresenceLog.selfCheck()` nằm **TRƯỚC** cái guard mà upstream đặt sẵn:
+
+```swift
+guard !AppMessageCenter.shouldSuppressSystemUI() else { return }
+```
+
+Guard đó tồn tại đúng để test host bỏ qua luồng khởi động. Đứng trước nó nghĩa là **test host
+cũng chạy chúng** — mà chúng làm I/O nặng: di cư đọc một plist rồi ghi ~38 khoá, còn
+`selfCheck` **chép và mở 5 database SQLite** (History của Vivaldi một mình đã **27,9 MB**).
+Test host làm xong chừng đó thì đã quá hạn bắt tay với test framework.
+
+**Chế độ hỏng này không chỉ tiếc — nó gây hiểu nhầm:** `0 pass / 0 fail` trông giống
+"chưa chạy" hơn là "hỏng", và `TEST FAILED` không nêu test nào. Nếu có CI, nó sẽ đỏ mà không
+ai biết tại sao.
+
+Đã chuyển hai lời gọi xuống sau guard. Di cư **vẫn** đứng trước mọi phép đọc settings — đó là
+ràng buộc thật, chỉ là nó phải nằm trong nhánh không-phải-test-host.
+
+**Sau khi sửa:** `Executed 313 tests, with 0 failures`.
