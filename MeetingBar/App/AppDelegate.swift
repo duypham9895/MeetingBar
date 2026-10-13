@@ -1,4 +1,9 @@
 //
+//  ĐÃ SỬA bởi dự án presence-gate (2026-10-13) so với bản gốc của
+//  Andrii Leitsius — selfCheck lúc khởi động; tắt patronage.
+//  Apache License 2.0 §4(b).
+//
+//
 //  AppDelegate.swift
 //  MeetingBar
 //
@@ -33,11 +38,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusLoopTask: Task<Void, Never>?
 
     func applicationDidFinishLaunching(_: Notification) {
+        // presence-gate: tự chẩn đoán MỘT LẦN. Chế độ hỏng của cổng là im lặng
+        // theo cả hai nghĩa — nó hỏng mà không kêu. Dòng này là chỗ duy nhất
+        // phân biệt được "chưa tới lúc im" với "không bao giờ im được nữa".
+        PresenceLog.selfCheck()
         // When launched as a test host, skip the entire launch flow so tests
         // don't trigger onboarding, status bar setup, or calendar sync.
         guard !AppMessageCenter.shouldSuppressSystemUI() else { return }
 
-        patronageService.start()
+        // presence-gate (Legal CHẶN §2.2): KHÔNG khởi động patronage.
+        // Bản này được phát cho đồng nghiệp của Duy. Giữ nút ủng hộ là đẩy họ
+        // tới một sản phẩm App Store của NGƯỜI KHÁC, bằng tiền của họ, nhân danh
+        // một app mang tên khác. Không phải chuyện giấy phép, nặng hơn thế.
+        // patronageService.start()   ← cố ý tắt, không xoá, để merge upstream còn thấy
 
         // Migrate legacy per-provider browser keys → providerBrowsers map
         MeetingOpenPreferencesMigration.migrateDefaultsIfNeeded()

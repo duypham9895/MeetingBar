@@ -122,6 +122,9 @@ final class NotificationActionRunner {
             if plan.kind == .autoJoin, let link = event.meetingLink?.url {
                 let gate = PresenceGate(window: Defaults[.presenceGateWindowSeconds])
                 let verdict = gate.shouldSuppress(url: link)
+                PresenceLog.write(
+                    "autoJoin  \(verdict.suppress ? "IM" : "MỞ")  "
+                        + "event=\(PresenceLog.tag(event.id))  \(verdict.reason)")
                 if verdict.suppress {
                     // VẪN ghi processed. Nếu return sớm mà không ghi, evaluate
                     // sẽ chạy lại với cùng lastModifiedDate ở mỗi tick và cổng

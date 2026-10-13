@@ -1,4 +1,9 @@
 //
+//  ĐÃ SỬA bởi dự án presence-gate (2026-10-13) so với bản gốc của
+//  Andrii Leitsius — emailMe không còn trỏ vào tác giả gốc.
+//  Apache License 2.0 §4(b).
+//
+//
 //  Constants.swift
 //  MeetingBar
 //
@@ -32,7 +37,10 @@ enum Links {
     static let github = URL(string: "https://github.com/leits/MeetingBar")!
     static let telegram = URL(string: "https://t.me/leits")!
     static let twitter = URL(string: "https://twitter.com/leits_dev")!
-    static let emailMe = URL(string: "mailto:leits.dev@gmail.com?subject=MeetingBar")!
+    // presence-gate (Legal CHẶN §2.2): bản gốc trỏ vào mailto:leits.dev@gmail.com.
+    // Đồng nghiệp gặp lỗi sẽ gửi mail cho Andrii Leitsius — một người lạ không
+    // liên quan tới bản fork này. Đổi sang issue tracker của chính fork.
+    static let emailMe = URL(string: "https://github.com/duypham9895/MeetingBar/issues")!
     static let calendarPreferences = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars")!
     static let rateAppInAppStore = URL(string: "itms-apps://apps.apple.com/app/id1532419400?action=write-review")!
 }
