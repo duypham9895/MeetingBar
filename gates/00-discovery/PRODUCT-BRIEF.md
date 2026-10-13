@@ -36,7 +36,7 @@ Maintainer, [#664](https://github.com/leits/MeetingBar/issues/664), 2024-03-23:
 > expected auto-join… I rarely get asked about this behavior and I don't see a better
 > solution here."
 
-⇒ Theo `docs/lessons.md` (*"workaround là bằng chứng, lời phàn nàn thì không"*): **đây gần như
+⇒ Theo `../docs/lessons.md` (*"workaround là bằng chứng, lời phàn nàn thì không"*): **đây gần như
 là ngứa của riêng Duy.** Đó là lý do phạm vi thu về công cụ cá nhân, không phải sản phẩm.
 
 ## Bức tường kiến trúc
