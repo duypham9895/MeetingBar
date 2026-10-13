@@ -75,7 +75,7 @@ phải va chạm tục** — denylist không bắt được loại này, chỉ n
 
 ### Quy tắc kỹ thuật bắt buộc nếu chọn tên có dấu
 
-`docs/lessons.md`: *"`Đêm Đông` là 8 code point ở NFC, 10 ở NFD."* Duy **đưa file .app cho đồng
+`../../../docs/lessons.md`: *"`Đêm Đông` là 8 code point ở NFC, 10 ở NFD."* Duy **đưa file .app cho đồng
 nghiệp** (Quyết định A) — tức là zip rồi gửi, đúng chỗ NFC/NFD cắn.
 
 ```
@@ -216,7 +216,7 @@ chỉ một tên. Repo **không có file NOTICE** (`ls NOTICE*` → không có).
 | 5 | `os_log` mức `.info` có bị prune khỏi store không | chưa đo | nếu chọn PA (b) ở §3: dùng `.notice`, rồi `log show --last 7d` kiểm bằng mắt ở S4 | S4 |
 | 6 | Tiêu đề cửa sổ Zoom **khi đang họp** có mang meeting ID không | kế thừa từ S0 — Duy có 0 cuộc Zoom/30 ngày | cuộc Zoom thật | S2 |
 
-**Theo `docs/lessons.md`: "không tìm thấy" ở #3 nghĩa là *phương pháp này không tìm thấy*, không
+**Theo `../../../docs/lessons.md`: "không tìm thấy" ở #3 nghĩa là *phương pháp này không tìm thấy*, không
 bao giờ là *không tồn tại*.** Với bản phát cho 5 người không bán, rủi ro trùng tên là rủi ro bối
 rối, không phải rủi ro pháp lý — nhưng đó là đánh giá của tôi, và Legal mới chốt được.
 

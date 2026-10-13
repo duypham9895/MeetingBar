@@ -208,8 +208,8 @@ một true positive — nhưng **Duy phải xác nhận bằng tay** (§6).
 
 ## D. Script tái lập
 
-Nằm ở scratchpad của phiên (`.../scratchpad/backtest.py`, `offset.py`, `gap.py`) — **sẽ mất khi
-phiên đóng**. Đề nghị SWE commit vào `probe/backtest-presence-gate.py`. Lõi:
+Nằm ở scratchpad của phiên (`../../probe/backtest-presence-gate.py`, `offset.py`, `gap.py`) — **sẽ mất khi
+phiên đóng**. Đề nghị SWE commit vào `../../probe/backtest-presence-gate.py`. Lõi:
 
 ```python
 LEAD = 180                     # automaticEventJoinTime thật của Duy

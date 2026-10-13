@@ -161,8 +161,8 @@ reviewer: same vendor, same priors — no external verifier ran
 | D.4 | File nhật ký thật sự tồn tại sau 2 ngày | **≥ 4 dòng.** File không tồn tại ⇒ **instrumentation hỏng**, không phải "không có gì xảy ra" | MẮT |
 | D.5 | Dựng được kịch bản im lặng bằng tay | mở link phòng 6 phút trước giờ họp, để tab đó, chờ ⇒ nhật ký có **≥1 dòng** `decision=silence` với `evidence_age_s` nằm trong `[180, W]` | MẮT |
 | D.6 | `ONE-PAGER.md` §4 đã được Duy gỡ mâu thuẫn | §4 hiện ghi *"không có instrumentation và cố ý không có"*. Phải có một dòng **MỚI, CÓ NGÀY, thêm bên dưới** (không sửa tại chỗ) — Quy tắc 14. **Duy sở hữu file này** | MẮT |
-| D.7 | `ONE-PAGER.md` không cũ hơn `PRD.md` | `scripts/vibe-check.sh` mục freshness ⇒ xanh. **Cũ hơn là lỗi CHẶN, không phải cảnh báo** | MÁY |
-| D.8 | `scripts/vibe-check.sh` xanh toàn bộ | chạy script ⇒ exit 0 | MÁY |
+| D.7 | `ONE-PAGER.md` không cũ hơn `PRD.md` | `../../../scripts/vibe-check.sh` mục freshness ⇒ xanh. **Cũ hơn là lỗi CHẶN, không phải cảnh báo** | MÁY |
+| D.8 | `../../../scripts/vibe-check.sh` xanh toàn bộ | chạy script ⇒ exit 0 | MÁY |
 
 ## §Q — CỔNG QUYẾT ĐỊNH · S2 không mở được nếu thiếu
 
@@ -171,7 +171,7 @@ reviewer: same vendor, same priors — no external verifier ran
 | Q.1 | **Cả 6 câu ở `DECISIONS-PENDING` đã có trả lời của Duy**, mỗi câu một dòng CÓ NGÀY trong `gates/01-spec/` | đọc. Một quyết định chỉ sống trong chat là một quyết định **sẽ bị làm lại** (Quy tắc 14) | MẮT |
 | Q.2 | **Ba bất đồng B-1, B-2, B-3 đã được Duy gỡ**, không phải bị ép đồng thuận | mỗi bất đồng có một dòng quyết định CÓ NGÀY. **Không được có dòng nào ghi "hai phòng đã thống nhất"** nếu Duy chưa trả lời | MẮT |
 | Q.3 | Con số **1–3 cuộc/30 ngày** đã được đặt trước Duy và có trả lời | một dòng CÓ NGÀY. Đây là điều kiện chặn S2 của phòng Data | MẮT |
-| Q.4 | `UNDERSTOOD.md` của S2 tồn tại trước khi S2 bắt đầu | trích dẫn nguyên văn từ `ONE-PAGER` **khớp**; phần kể lại **không khớp**. `scripts/vibe-check.sh` mục `[2]` và `[3]` | MÁY |
+| Q.4 | `UNDERSTOOD.md` của S2 tồn tại trước khi S2 bắt đầu | trích dẫn nguyên văn từ `ONE-PAGER` **khớp**; phần kể lại **không khớp**. `../../../scripts/vibe-check.sh` mục `[2]` và `[3]` | MÁY |
 
 ---
 
