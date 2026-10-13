@@ -1,4 +1,9 @@
 //
+//  ĐÃ SỬA bởi dự án presence-gate (2026-10-13) so với bản gốc của
+//  Andrii Leitsius — thêm đèn chẩn đoán cho đường lập lịch in-app action.
+//  Apache License 2.0 §4(b).
+//
+//
 //  NotificationScheduler.swift
 //  MeetingBar
 //
@@ -198,9 +203,23 @@ final class NotificationScheduler {
             actionTasks[id] = nil
         }
 
+        // presence-gate: đèn chẩn đoán. Chế độ hỏng của cả tính năng là IM LẶNG,
+        // nên "không có gì xảy ra" phải phân biệt được với "chưa tới lúc".
+        PresenceLog.write(
+            "plan      \(plans.count) kế hoạch in-app, \(eventByID.count) sự kiện trong tầm"
+                + "  [autoJoin enabled=\(settings.autoJoin.enabled) "
+                + "offset=\(Int(settings.autoJoin.offset))s  dismissed=\(settings.dismissedEventIDs.count)]"
+                + (plans.isEmpty ? "" : "  → " + plans.map {
+                    "\($0.kind)@\(PresenceLog.tag($0.eventID))" }.joined(separator: " ")))
+
         for plan in plans {
             let id = Self.identifierPrefix + plan.identity
-            guard actionTasks[id] == nil, let event = eventByID[plan.eventID] else { continue }
+            guard actionTasks[id] == nil, let event = eventByID[plan.eventID] else {
+                PresenceLog.write(
+                    "plan      BỎ QUA \(plan.kind)@\(PresenceLog.tag(plan.eventID)) — "
+                        + (actionTasks[id] != nil ? "đã có Task" : "không tìm thấy event"))
+                continue
+            }
 
             actionTasks[id] = Task { [weak self] in
                 let delay = max(plan.fireDate.timeIntervalSince(now), 0)

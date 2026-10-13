@@ -38,6 +38,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusLoopTask: Task<Void, Never>?
 
     func applicationDidFinishLaunching(_: Notification) {
+        // presence-gate: di cư TRƯỚC MỌI THỨ. Gỡ sandbox đổi chỗ UserDefaults, nên
+        // nếu không nhặt lại thì mọi phép đọc settings bên dưới đều đọc một kho trống
+        // — kể cả automaticEventJoin, tức chính tính năng dự án này tồn tại để sửa.
+        SandboxContainerMigration.runIfNeeded()
+
         // presence-gate: tự chẩn đoán MỘT LẦN. Chế độ hỏng của cổng là im lặng
         // theo cả hai nghĩa — nó hỏng mà không kêu. Dòng này là chỗ duy nhất
         // phân biệt được "chưa tới lúc im" với "không bao giờ im được nữa".

@@ -112,6 +112,12 @@ final class NotificationActionRunner {
             ) else { return }
         }
 
+        if plan.kind == .autoJoin {
+            PresenceLog.write(
+                "fire      autoJoin@\(PresenceLog.tag(event.id)) tới fireAction — "
+                    + "enabled=\(action.enabled) offset=\(Int(action.offset))s "
+                    + "hasLink=\(actionEvent.hasMeetingLink)")
+        }
         guard let config = actionConfig(for: plan.kind, action: action),
             let decision = EventActionPolicy.evaluate(
                 event: actionEvent,
@@ -119,7 +125,12 @@ final class NotificationActionRunner {
                 processed: recordStore.processedRecords(for: plan.kind),
                 now: now
             )
-        else { return }
+        else {
+            if plan.kind == .autoJoin {
+                PresenceLog.write("fire      autoJoin@\(PresenceLog.tag(event.id)) BỊ POLICY CHẶN (evaluate=nil)")
+            }
+            return
+        }
 
         if decision.shouldFireSideEffect {
             // presence-gate: cổng đứng ĐÚNG Ở ĐÂY, không ở shouldConsiderActionEvent.

@@ -206,3 +206,68 @@ code upstream tôi không sửa, nhưng "không sửa" không phải "đã kiể
 **Cách đóng khoảng trống này ở S4, đã biết đường:** tạo sự kiện **thẳng trong Lịch macOS**
 (đúng lịch `B880C2DB-8566-4D0F-A6DB-5F2AAD8219A5` mà MeetingBar đang theo dõi), không qua
 Google API. Hoặc đổi `eventStoreProvider` sang Google trong lúc test.
+
+---
+
+## Lát 6 — E2E ĐẠT, và một lỗi chặn mà S0/S1 đều bỏ sót ✅
+
+**Ngày:** 2026-10-13 đêm · **Trạng thái:** chuỗi đầy đủ đã chạy trong app thật
+
+### Bằng chứng
+
+```
+23:00:58   auto-join hẹn giờ bắn (T-180s của sự kiện 23:03:58)
+23:01:01   autoJoin  IM  event=8d4b4370  đã vào meet:pge-live-xyz — history:Vivaldi/Default
+
+lượt vào phòng trong lịch sử: CHỈ MỘT (22:57:06, lượt gieo)
+                              ⇒ KHÔNG có tab thứ hai
+```
+
+Chuỗi đầy đủ, không mô phỏng chỗ nào: **EventKit → NotificationPlanner → Scheduler Task →
+`fire(plan:)` → `fireAction` → PresenceGate → im lặng.**
+
+### 🚩 Lỗi chặn tìm ra trên đường: GỠ SANDBOX LÀM MẤT TOÀN BỘ CẤU HÌNH
+
+Ba vòng E2E đầu đều thất bại và **không để lại dấu vết nào** — app chạy, menubar hiện sự kiện,
+nhưng auto-join không bao giờ bắn. Chỉ tìm ra khi in giá trị settings **lúc chạy**:
+
+```
+app đọc được:   autoJoin enabled=false  offset=5s      ← đúng bằng giá trị fallback
+đĩa đang ghi:   automaticEventJoin=true  time=180
+```
+
+Nguyên nhân: **hai kho UserDefaults khác nhau.**
+
+| | `~/Library/Preferences/` | `~/Library/Containers/leits.MeetingBar/…` |
+|---|---|---|
+| ai đọc | bản fork (**không sandbox**) | bản gốc (**có sandbox**) |
+| `automaticEventJoin` | **không có** | `true` |
+| `eventStoreProvider` | *(trạng thái test)* | `MacOS Calendar App` |
+
+**Quyết định A (gỡ sandbox) đổi chỗ UserDefaults, và không ai đo điều đó ở S0 hay S1.**
+Hậu quả với người dùng thật: cài bản fork lên là thấy một app trắng tinh — onboarding chạy
+lại, lịch đã chọn biến mất, bookmark mất, và `automaticEventJoin` rơi về `false`.
+
+**Tức là chính tính năng mà cả dự án này tồn tại để sửa thì không chạy — và không báo gì.**
+
+### Sửa: `MeetingBar/Settings/SandboxContainerMigration.swift`
+
+Chạy **một lần, sớm nhất** trong `applicationDidFinishLaunching`, trước mọi phép đọc settings.
+Đọc plist trong container, mang sang những khoá kho mới **chưa có** (không bao giờ ghi đè —
+nếu người dùng đã chỉnh trong bản fork thì lựa chọn mới thắng).
+
+Đo thật: **`migrate mang 38/40 khoá từ container sandbox sang`**, và ngay sau đó
+`autoJoin enabled=true offset=180s`.
+
+### Đèn chẩn đoán — giữ lại, không gỡ
+
+Thêm hai dòng log vào đường đi (`plan …` ở Scheduler, `fire …` ở `fireAction`). Chúng là lý
+do duy nhất tìm ra lỗi trên, và chế độ hỏng của tính năng này **im lặng theo cả hai nghĩa**:
+nó hỏng mà không kêu, và *"không im"* trông y hệt *"chưa tới lúc im"*.
+
+### Một chi tiết về thời điểm, S4 phải biết
+
+`NotificationPlanner.appendIfDue` chỉ lập kế hoạch khi `fireDate > now`. Sự kiện tạo ra mà
+giờ bắn **đã qua** thì không có Task nào — nó rơi sang đường quét bù `fireDueActions`, vốn
+chỉ chạy ở một số thời điểm. Ba vòng test đầu của tôi thất bại một phần vì lý do này. Muốn
+test đường hẹn giờ thì **app phải đang chạy TRƯỚC khi sự kiện được tạo**.
