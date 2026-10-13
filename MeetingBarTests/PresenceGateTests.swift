@@ -5,6 +5,7 @@
 //  presence-gate — thêm mới, không có trong MeetingBar gốc (Apache-2.0 §4(b)).
 //
 
+import Defaults
 import XCTest
 
 @testable import MeetingBar
@@ -85,5 +86,87 @@ final class PresenceGateMergeTests: XCTestCase {
     func testUnparseableLinkOpens() {
         let gate = PresenceGate(sources: [StubSource(verdict: .present(source: "a"))], window: 900)
         XCTAssertFalse(gate.shouldSuppress(url: URL(string: "https://meet.google.com/home")!).suppress)
+    }
+}
+
+// MARK: - Dây nối: auto-join → cổng → sink
+//
+// Đây là test quan trọng nhất của Lát 1. Nó trả lời câu mà "BUILD SUCCEEDED"
+// không trả lời được: cổng có THẬT SỰ nằm trên đường đi của auto-join không.
+//
+// Ban đầu tôi định kiểm bằng một cuộc họp thật. Không được: MeetingBar đọc lịch
+// qua EventKit (`eventStoreProvider = "MacOS Calendar App"`), nên một sự kiện tạo
+// bằng Google Calendar API phải chờ Lịch macOS đồng bộ — hàng chục phút, và không
+// tất định. Nên cổng được TIÊM VÀO runner, và dây nối kiểm bằng 3 mili giây.
+
+@MainActor
+final class PresenceGateWiringTests: XCTestCase {
+    private func autoJoinSettings() -> NotificationPlanningSettings {
+        NotificationPlanningSettings(
+            eventStart: .disabled,
+            eventEnd: .disabled,
+            fullscreen: .disabled,
+            autoJoin: .init(enabled: true, offset: 180),
+            scriptOnStart: .disabled,
+            dismissedEventIDs: [],
+            fullscreenNotificationsForEventsWithoutMeetingLink: false
+        )
+    }
+
+    private func makeRunner(suppress: Bool) -> (NotificationActionRunner, FakeNotificationActionSink) {
+        let sink = FakeNotificationActionSink()
+        let runner = NotificationActionRunner(actionSink: sink)
+        runner.presenceGate = { _ in (suppress, suppress ? "test: đã vào" : "test: chưa vào") }
+        return (runner, sink)
+    }
+
+    /// Cổng nói IM ⇒ sink KHÔNG được gọi. Không có tab thứ hai.
+    func testGateSuppressesAutoJoin() {
+        let now = Date()
+        let (runner, sink) = makeRunner(suppress: true)
+        let evt = makeFakeEvent(
+            id: "S", start: now.addingTimeInterval(60),
+            end: now.addingTimeInterval(1860), withLink: true)
+
+        runner.fireDueActions(events: [evt], settings: autoJoinSettings(), now: now)
+
+        XCTAssertTrue(sink.actions.isEmpty, "cổng nói IM mà auto-join vẫn chạy")
+        XCTAssertTrue(sink.attempts.isEmpty, "sink không được chạm tới khi cổng im")
+    }
+
+    /// Cổng nói MỞ ⇒ hành xử y hệt MeetingBar gốc.
+    func testGateLetsAutoJoinThroughWhenAbsent() {
+        let now = Date()
+        let (runner, sink) = makeRunner(suppress: false)
+        let evt = makeFakeEvent(
+            id: "P", start: now.addingTimeInterval(60),
+            end: now.addingTimeInterval(1860), withLink: true)
+
+        runner.fireDueActions(events: [evt], settings: autoJoinSettings(), now: now)
+
+        XCTAssertEqual(sink.actions.map(\.eventID), ["P"])
+        XCTAssertEqual(sink.actions.map(\.kind), [.autoJoin])
+    }
+
+    /// Khi im, VẪN phải ghi processed.
+    ///
+    /// Nếu return sớm mà không ghi, `EventActionPolicy.evaluate` sẽ chạy lại với
+    /// cùng `(id, lastModifiedDate)` ở MỌI tick, và cổng biến thành một vòng lặp
+    /// đánh giá vô tận — mỗi tick là một lần đọc 5 file SQLite.
+    func testSuppressionStillRecordsProcessed() {
+        let now = Date()
+        let (runner, sink) = makeRunner(suppress: true)
+        let evt = makeFakeEvent(
+            id: "R", start: now.addingTimeInterval(60),
+            end: now.addingTimeInterval(1860), withLink: true)
+
+        runner.fireDueActions(events: [evt], settings: autoJoinSettings(), now: now)
+        // tick thứ hai: nếu lần đầu không ghi processed thì lần này cổng chạy lại
+        runner.fireDueActions(events: [evt], settings: autoJoinSettings(), now: now)
+
+        XCTAssertTrue(sink.actions.isEmpty)
+        XCTAssertTrue(
+            Defaults[.processedEventsForAutoJoin].contains { $0.id == "R" },
+            "im lặng rồi mà không ghi processed ⇒ vòng lặp đánh giá mỗi tick")
     }
 }

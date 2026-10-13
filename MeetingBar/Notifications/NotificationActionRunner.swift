@@ -21,6 +21,16 @@ final class NotificationActionRunner {
     private let recordStore: NotificationRecordStore
     private weak var actionSink: NotificationActionSink?
 
+    /// presence-gate: cổng được TIÊM VÀO chứ không dựng tại chỗ.
+    ///
+    /// Không phải vì cần linh hoạt — mà vì nếu dựng tại chỗ thì dây nối
+    /// auto-join → cổng chỉ kiểm được bằng một cuộc họp thật, tức là bằng
+    /// đồng bộ lịch, tức là bằng một thứ không tất định. Tiêm vào thì kiểm
+    /// được bằng một test chạy trong 3 mili giây.
+    var presenceGate: (URL) -> (suppress: Bool, reason: String) = { url in
+        PresenceGate(window: Defaults[.presenceGateWindowSeconds]).shouldSuppress(url: url)
+    }
+
     init(recordStore: NotificationRecordStore = NotificationRecordStore(), actionSink: NotificationActionSink? = nil) {
         self.recordStore = recordStore
         self.actionSink = actionSink
@@ -120,8 +130,7 @@ final class NotificationActionRunner {
             // thường gặp nhất — và nó KHÔNG gọi hàm đó. Đặt cổng ở trên là để
             // nó bị đi vòng đúng lúc cần nhất.
             if plan.kind == .autoJoin, let link = event.meetingLink?.url {
-                let gate = PresenceGate(window: Defaults[.presenceGateWindowSeconds])
-                let verdict = gate.shouldSuppress(url: link)
+                let verdict = presenceGate(link)
                 PresenceLog.write(
                     "autoJoin  \(verdict.suppress ? "IM" : "MỞ")  "
                         + "event=\(PresenceLog.tag(event.id))  \(verdict.reason)")

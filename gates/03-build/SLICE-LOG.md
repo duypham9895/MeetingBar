@@ -147,3 +147,62 @@ một false positive **đã quan sát được trong lịch sử thật của Du
 định. `meet.google.com/home` xuất hiện nhiều lần mỗi ngày; một lần khớp nhầm nó là cổng im
 cho **mọi** cuộc Meet trong ngày hôm đó. Test này tồn tại để giữ regex chặt khi có người
 tương lai thấy nó "khó đọc" và muốn nới ra.
+
+---
+
+## Lát 5 — xác minh DÂY NỐI, và một bài test thất bại đáng ghi lại ✅
+
+### Thử E2E bằng cuộc họp thật — THẤT BẠI, vì lý do môi trường
+
+Kế hoạch: gieo một mã phòng vào lịch sử Vivaldi, tạo sự kiện lịch có đúng link đó, để
+auto-join bắn, xem nhật ký có `IM` không.
+
+Đã làm: gieo `qaz-wsxe-dcv` lúc 21:34:02 ✓ · tạo sự kiện 21:45 ✓ · tắt MeetingBar của Duy ✓ ·
+chạy build test ✓ · chờ qua giờ bắn 21:42 ✓.
+
+**Kết quả: nhật ký chỉ có `selfcheck`, không có dòng `autoJoin` nào. Auto-join chưa hề bắn.**
+
+**Nguyên nhân, đã truy ra:** `defaults read leits.MeetingBar eventStoreProvider` trả
+`"MacOS Calendar App"` — **MeetingBar đọc lịch qua EventKit, không qua Google Calendar API.**
+Một sự kiện tạo bằng Google API phải chờ Lịch macOS đồng bộ xuống, mất hàng chục phút.
+Đọc menubar của build test qua AX: tiêu đề **rỗng** ⇒ nó thật sự không thấy sự kiện.
+Và `selectedCalendarIDs` chỉ có **một** lịch, nên còn một biến nữa chưa loại trừ.
+
+**Đây không phải lỗi của cổng.** Nhưng nó là một sự thật về môi trường test mà S4 phải biết
+trước, nếu không S4 sẽ mất đúng số thời gian tôi vừa mất.
+
+Môi trường đã dọn: sự kiện đã xoá · build test đã tắt · **MeetingBar của Duy đã bật lại**.
+
+### Đổi cách: tiêm cổng, kiểm dây nối bằng 3 mili giây
+
+Cổng từ chỗ dựng-tại-chỗ chuyển thành **thuộc tính tiêm vào** `NotificationActionRunner`.
+Không phải vì cần linh hoạt — mà vì dựng tại chỗ thì dây nối **chỉ kiểm được bằng một thứ
+không tất định**. Tiêm vào thì kiểm được tất định.
+
+```
+PresenceGateWiringTests                                                   3/3 ✓
+  ✓ testGateSuppressesAutoJoin            cổng IM ⇒ sink KHÔNG được gọi.
+                                          Không có tab thứ hai. Đây là câu hỏi gốc.
+  ✓ testGateLetsAutoJoinThroughWhenAbsent cổng MỞ ⇒ y hệt MeetingBar gốc
+  ✓ testSuppressionStillRecordsProcessed  hai tick liên tiếp, vẫn im, processed ĐÃ ghi
+                                          ⇒ không có vòng lặp đánh giá mỗi tick
+```
+
+### Toàn bộ suite — không hồi quy
+
+```
+Executed 313 tests, with 0 failures (0 unexpected) in 26.693 seconds
+```
+
+`NotificationActionRunner` là file tôi sửa, và nó có hơn 800 dòng test của upstream. 313/313
+xanh nghĩa là cổng không làm hỏng hành vi nào đang có.
+
+### Còn lại — nói thẳng là CHƯA xác minh
+
+**Dây nối đã chứng minh tất định. Chuỗi đầy-đủ-từ-lịch-thật thì CHƯA.** Khoảng trống chính
+xác là: *EventKit giao sự kiện → MeetingBar lập lịch Task → Task gọi `fire(plan:)`*. Đó là
+code upstream tôi không sửa, nhưng "không sửa" không phải "đã kiểm".
+
+**Cách đóng khoảng trống này ở S4, đã biết đường:** tạo sự kiện **thẳng trong Lịch macOS**
+(đúng lịch `B880C2DB-8566-4D0F-A6DB-5F2AAD8219A5` mà MeetingBar đang theo dõi), không qua
+Google API. Hoặc đổi `eventStoreProvider` sang Google trong lúc test.
