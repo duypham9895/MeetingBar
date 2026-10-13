@@ -210,6 +210,7 @@
 				enm,
 				"zh-Hans",
 				pt,
+				vi,
 			);
 			mainGroup = 144C01702462D0C3000C9FFC;
 			packageReferences = (

@@ -170,7 +170,12 @@ enum UtilsRegex {
 enum AppLanguage: String, Defaults.Serializable, Codable {
     case system = ""
     case english = "en"
-    case ukrainian = "ua"
+    // presence-gate: bản gốc ghi "ua". Thư mục trên đĩa là uk.lproj, nên
+    // Bundle.main.path(forResource: "ua", ofType: "lproj") trả nil và
+    // I18N.checkLanguageAvailability lặng lẽ reset về hệ thống —
+    // tức là chọn tiếng Ukraina KHÔNG BAO GIỜ có tác dụng. "uk" mới là
+    // mã ISO 639-1 đúng của tiếng Ukraina; "ua" là mã QUỐC GIA.
+    case ukrainian = "uk"
     case croatian = "hr"
     case german = "de"
     case french = "fr"
@@ -185,6 +190,7 @@ enum AppLanguage: String, Defaults.Serializable, Codable {
     case spanish = "es"
     case slovak = "sk"
     case dutch = "nl"
+    case vietnamese = "vi"
 }
 
 struct Browser: Defaults.Serializable, Codable, Hashable, Sendable {

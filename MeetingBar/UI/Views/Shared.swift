@@ -1,4 +1,9 @@
 //
+//  ĐÃ SỬA bởi dự án presence-gate (2026-10-13) so với bản gốc của
+//  Andrii Leitsius — thêm tiếng Việt vào picker ngôn ngữ.
+//  Apache License 2.0 §4(b).
+//
+//
 //  Shared.swift
 //  MeetingBar
 //
@@ -200,6 +205,9 @@ struct LaunchAtLoginANDPreferredLanguagePicker: View {
                     Text("Português").tag(AppLanguage.portuguese)
                     Text("Slovenčina").tag(AppLanguage.slovak)
                     Text("Nederlands").tag(AppLanguage.dutch)
+                    // presence-gate: Group của SwiftUI chỉ nhận 10 con. Group thứ nhất
+                    // đã đủ 10, nên tiếng Việt vào Group thứ hai (đang có 6).
+                    Text("Tiếng Việt").tag(AppLanguage.vietnamese)
                 }
             }
         }
