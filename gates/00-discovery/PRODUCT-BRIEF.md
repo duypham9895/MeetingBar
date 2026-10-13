@@ -243,3 +243,78 @@ Hai trong các tín hiệu cốt lõi của screenpipe vừa **đo ra là sai** 
 Cộng với Đ1 (giấy phép thương mại, cấm chép), kết luận: bảng profile đó **không phải món quà
 bị mất, mà là một thứ đằng nào cũng phải viết lại và kiểm lại.** Chi phí của Đ1 thấp hơn
 bản trên ước tính.
+
+---
+
+# ĐÍNH CHÍNH LỚN — 2026-10-13, critic độ-đầy-đủ lật ngược kiến trúc
+
+> Mục này **đè lên** §Hệ quả của Quyết định C ở trên. Bản đó không sai về logic;
+> nó sai về **tiền đề** — nó giả định Zoom quan trọng.
+
+## Đ7 — Bài toán không phải DETECT. Là IDEMPOTENCE.
+
+Sáu mũi research đều đọc đề là *"đo một trạng thái của thế giới"* (máy có đang họp không).
+Đề thật là *"đừng thực hiện cùng một hành động hai lần"* (tôi đã mở link NÀY chưa).
+
+```
+   DETECT        cần cảm biến · cần quyền · cần đúng trên máy người khác
+                 · gãy mỗi lần Zoom/Meet đổi bản UI
+   IDEMPOTENCE   cần một dấu vết do CHÍNH máy này để lại
+                 · không quyền · không hợp đồng ngầm với vendor · không bao giờ gãy
+```
+
+## Đ8 — Dữ liệu thật của Duy, tự đo, và nó xoá sổ nhánh Zoom
+
+**Lịch 30 ngày (Google Calendar, 99 sự kiện):**
+
+| Nền tảng | Số cuộc |
+|---|---|
+| **Google Meet** | **71** |
+| Zoom | **0** |
+| Teams | 1 |
+| Webex | 1 |
+| Không có link | 26 |
+
+**Lịch sử Vivaldi (`sqlite3`, KHÔNG prompt TCC):** 127 URL phòng họp distinct ·
+**96 lượt truy cập thật trong 30 ngày** · timestamp tới giây.
+
+⚠️ **Bẫy triển khai:** phải JOIN bảng `visits`, không đọc `urls.last_visit_time` — cột đó chỉ
+giữ lần CUỐI nên gộp mất mọi lần lặp (32 so với 96, chênh 3×).
+
+## Đ9 — Kiến trúc đúng, thay cho "AX-only"
+
+```
+   TẦNG 1   so mã phòng của event với lịch sử trình duyệt N phút gần nhất
+            ├─ ZERO quyền, zero dialog, zero setup        → thoả Quyết định C TUYỆT ĐỐI
+            ├─ mang MÃ PHÒNG                               → thoả Quyết định B
+            ├─ phủ 71/73 = 97% cuộc họp thật của Duy
+            └─ không bao giờ gãy khi vendor đổi UI
+
+   TẦNG 2   AX đọc nút Leave/Hangup — CHỈ cho app native (Zoom/Teams/Webex)
+            ├─ tốn 1 toggle Accessibility + bảo trì vĩnh viễn
+            └─ mua về: 2 cuộc / 30 ngày          ← OPT-IN, mặc định TẮT
+```
+
+**Hai câu tôi viết ở trên và giờ phải rút lại:**
+
+| Tôi viết | Sai ở đâu |
+|---|---|
+| *"Kiến trúc chốt: AX-only"* | Suy đúng từ tiền đề sai. Tiền đề là "phải chạy cho Zoom". Zoom = 0 cuộc |
+| *"Sàn không hạ được nữa: MỘT toggle"* | Sàn là **KHÔNG toggle nào** cho 97% ca. Tôi dừng tìm quá sớm |
+
+## Đ10 — Hai phương án zero-code, nêu ra để Duy bác chứ không để lờ đi
+
+1. **Lật hai cờ có sẵn.** `joinEventNotification = 0`, `automaticEventJoin = 1` hiện tại.
+   Đảo lại ⇒ nhận thông báo có nút Join thay vì tự mở. **Nỗi đau biến mất, 0 dòng code.**
+   Giá: một cú bấm mỗi cuộc họp.
+2. **Đếm ngược huỷ được.** T-3 hiện banner *"sẽ mở sau 10s — [Huỷ]"*. Zero detect, và nó
+   **sai an toàn**: không bao giờ gây lỡ họp.
+
+**Cả hai đều đòi Duy bấm một cái** ⇒ mâu thuẫn với *"tôi kh cần làm gì hết"* (Quyết định C).
+Tôi ghi lại để anh bác, không phải để tôi lờ đi.
+
+## Đ11 — Câu hỏi không ai trong sáu mũi hỏi
+
+> Dự án này lấy thời gian từ đâu? Còn **5 cuối tuần** đến 15/11, và `noelroom` đã nhận cam kết.
+
+Chưa trả lời. Thuộc về Duy.
