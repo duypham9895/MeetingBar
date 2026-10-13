@@ -1,4 +1,9 @@
 //
+//  ĐÃ SỬA bởi dự án presence-gate (2026-10-13) so với bản gốc của
+//  Andrii Leitsius — chỉ mời chọn nguồn lịch bản build này dùng được.
+//  Apache License 2.0 §4(b).
+//
+//
 //  AccessScreen.swift
 //  MeetingBar
 //

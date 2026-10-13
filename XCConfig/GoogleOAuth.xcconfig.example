@@ -1,0 +1,12 @@
+// Chép file này thành XCConfig/GoogleOAuth.xcconfig rồi điền giá trị thật.
+// Bản .xcconfig (không có .example) đã nằm trong .gitignore.
+//
+// CLIENT_NUMBER là phần SỐ ở đầu client ID, KHÔNG gồm ".apps.googleusercontent.com".
+//   client ID đầy đủ:  123456789012-abcdefg.apps.googleusercontent.com
+//   điền vào đây:      123456789012-abcdefg
+//
+// Cách lấy: docs/GOOGLE-OAUTH-SETUP.md
+
+GOOGLE_CLIENT_NUMBER = 123456789012-abcdefghijklmnop
+GOOGLE_CLIENT_SECRET = GOCSPX-xxxxxxxxxxxxxxxxxxxx
+GOOGLE_AUTH_KEYCHAIN_NAME = presence-gate-google-auth

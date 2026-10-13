@@ -1,4 +1,9 @@
 //
+//  ĐÃ SỬA bởi dự án presence-gate (2026-10-13) so với bản gốc của
+//  Andrii Leitsius — thay force-unwrap redirectURL bằng throw.
+//  Apache License 2.0 §4(b).
+//
+//
 //  GCEventStore.swift
 //  MeetingBar
 //
@@ -11,8 +16,10 @@ import AppKit
 import Defaults
 import Foundation
 
-let googleClientNumber = Bundle.main.object(forInfoDictionaryKey: "GOOGLE_CLIENT_NUMBER") as! String
-let googleClientSecret = Bundle.main.object(forInfoDictionaryKey: "GOOGLE_CLIENT_SECRET") as! String
+// presence-gate: bản gốc dùng `as! String` — khoá thiếu là crash lúc nạp lớp,
+// trước cả khi ai kịp hỏi người dùng có muốn dùng Google không.
+let googleClientNumber = GoogleOAuthConfig.clientNumber ?? ""
+let googleClientSecret = GoogleOAuthConfig.clientSecret ?? ""
 let googleAuthKeychainName = Bundle.main.object(forInfoDictionaryKey: "GOOGLE_AUTH_KEYCHAIN_NAME") as! String
 
 extension OIDServiceConfiguration: @unchecked @retroactive Sendable {}
@@ -166,12 +173,35 @@ final class GCEventStore: NSObject,
             extra["prompt"] = "consent"
         }
 
+        // presence-gate: chặn SỚM, trước khi chạm mạng.
+        // Nếu bản build chưa có OAuth client thì mọi thứ sau đây đều vô nghĩa, và
+        // thất bại ở tầng URL chỉ đẻ ra `NSURLErrorDomain -1000` — một con số không
+        // nói cho ai biết điều gì. Nói thẳng ra là chưa cấu hình.
+        guard GoogleOAuthConfig.isConfigured else {
+            MeetingBarLogger.calendar.error(
+                "Google OAuth chưa cấu hình — XCConfig còn placeholder. Xem docs/GOOGLE-OAUTH-SETUP.md")
+            throw GoogleOAuthConfig.ConfigError.notConfigured
+        }
+
+        // bản gốc force-unwrap URL(string: kRedirectURI).
+        // Khi XCConfig chưa điền (GOOGLE_CLIENT_NUMBER còn là REPLACE_BY_...),
+        // chuỗi thành "com.googleusercontent.apps.REPLACE_BY_...:/oauthredirect".
+        // Dấu gạch dưới không hợp lệ trong scheme URL ⇒ URL(string:) trả nil ⇒
+        // `!` giết cả app ~28 giây sau khi khởi động, KỂ CẢ khi người dùng đang
+        // dùng provider "MacOS Calendar App" và không đụng gì tới Google.
+        // Ném lỗi thay vì chết: hàm này vốn đã `async throws`.
+        guard let redirectURL = URL(string: Self.kRedirectURI) else {
+            MeetingBarLogger.calendar.error(
+                "Google OAuth chưa cấu hình (XCConfig còn placeholder) — bỏ qua đăng nhập Google")
+            throw URLError(.badURL)
+        }
+
         let request = OIDAuthorizationRequest(
             configuration: config,
             clientId: Self.kClientID,
             clientSecret: Self.kClientSecret,
             scopes: scopes,
-            redirectURL: URL(string: Self.kRedirectURI)!,
+            redirectURL: redirectURL,
             responseType: OIDResponseTypeCode,
             additionalParameters: extra
         )

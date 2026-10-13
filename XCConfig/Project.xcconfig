@@ -4,3 +4,9 @@ GOOGLE_CLIENT_SECRET = REPLACE_BY_YOUR_GOOGLE_CLIENT_SECRET
 GOOGLE_AUTH_KEYCHAIN_NAME = REPLACE_BY_YOUR_GOOGLE_AUTH_KEYCHAIN_NAME
 SWIFT_STRICT_CONCURRENCY = complete
 #include? "DevTeamOverride.xcconfig"
+
+// presence-gate: điền credential THẬT vào XCConfig/GoogleOAuth.xcconfig.
+// File đó nằm trong .gitignore nên không bao giờ lọt vào repo.
+// Thiếu file ⇒ build vẫn chạy, Google Calendar API hiện "not configured in this build".
+// Hướng dẫn lấy credential: docs/GOOGLE-OAUTH-SETUP.md
+#include? "GoogleOAuth.xcconfig"

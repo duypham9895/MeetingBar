@@ -1,4 +1,4 @@
-//
+//\n//  ĐÃ SỬA bởi dự án presence-gate (2026-10-13) so với bản gốc của\n//  Andrii Leitsius — chặn chọn Google khi chưa cấu hình OAuth.\n//  Apache License 2.0 §4(b).\n//\n//
 //  CalendarsTab.swift
 //  MeetingBar
 //
@@ -157,6 +157,11 @@ struct ProviderPicker: View {
             }
         }
         .onChange(of: picker) { provider in
+            // presence-gate: quay lại lựa chọn cũ thay vì để người dùng rơi vào -1000.
+            if provider == .googleCalendar, !GoogleOAuthConfig.isConfigured {
+                picker = appModel.state.activeProvider
+                return
+            }
             guard ProviderPickerSelectionPolicy.shouldRequestChange(
                 selectedProvider: provider,
                 activeProvider: appModel.state.activeProvider,

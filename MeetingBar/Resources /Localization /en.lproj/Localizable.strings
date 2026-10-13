@@ -417,3 +417,9 @@
 "link_url_cant_open_title" = "Oops! Unable to open the link in %@";
 "link_url_cant_open_message" = "Ensure you have %@ installed, or open such links in a web browser from the preferences instead.";
 
+
+"google_oauth_not_configured" = "Google Calendar API is unavailable in this build: no OAuth client is configured. See docs/GOOGLE-OAUTH-SETUP.md. The macOS Calendar app source works normally.";
+
+"google_oauth_unavailable_suffix" = "not configured in this build";
+
+"onboarding_calendar_source_single" = "This build reads calendars through the macOS Calendar app, which covers every account configured there — iCloud, Google, Exchange, CalDAV and more.";

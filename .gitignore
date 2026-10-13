@@ -5,6 +5,9 @@
 # Development Team override
 XCConfig/DevTeamOverride.xcconfig
 
+# Google OAuth client — credential THẬT, không bao giờ commit
+XCConfig/GoogleOAuth.xcconfig
+
 # XCode generated files
 MeetingBar.xcodeproj/project.xcworkspace/xcuserdata/*
 MeetingBar.xcodeproj/xcuserdata/*
