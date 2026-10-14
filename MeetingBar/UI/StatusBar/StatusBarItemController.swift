@@ -9,6 +9,7 @@
 import Cocoa
 import Combine
 import Defaults
+import EventKit
 import KeyboardShortcuts
 
 enum MenuStyleConstants {
@@ -379,6 +380,24 @@ final class StatusBarItemController {
     }
 
     @objc func openCalendarPermissionsAction() {
+        // presence-gate: bản gốc chỉ mở System Settings. Đó là lời khuyên ĐÚNG khi người
+        // dùng đã từ chối quyền, và SAI khi app chưa bao giờ hỏi — macOS chỉ liệt kê
+        // trong Privacy › Calendars những app ĐÃ TỪNG xin. App chưa hỏi thì không có
+        // dòng nào để bật, và người dùng đứng trước một danh sách không chứa thứ họ cần.
+        //
+        // Ngõ cụt này không do mảnh nào sai một mình, mà do ba hành vi đúng ghép lại:
+        //   1. xong onboarding thì không chạy lại  (onboardingCompleted = true)
+        //   2. chỗ DUY NHẤT gọi signIn() là luồng chọn provider, mà onboarding mới gọi
+        //   3. TCC khoá theo cặp bundle-id + chữ ký, nên đổi chữ ký là quyền về
+        //      .notDetermined — kể cả khi cấu hình nói rằng đã cài xong từ lâu
+        // Gặp thật khi cài bản fork này lên máy đã dùng MeetingBar bản App Store.
+        //
+        // Sửa: chưa hỏi bao giờ thì HỎI (đi qua đúng đường mà reconnect vẫn dùng);
+        // chỉ khi đã bị từ chối hoặc bị chặn mới mở System Settings.
+        if EventKitReadAccessError.current() == .notDetermined {
+            dependencies.send(.changeProvider(stateProvider, signOut: false))
+            return
+        }
         NSWorkspace.shared.open(Links.calendarPreferences)
     }
 
