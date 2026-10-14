@@ -190,7 +190,21 @@ enum MeetingOpener {
     }
 
     static func emailAttendees(for event: MBEvent) {
-        let service = NSSharingService(named: NSSharingService.Name.composeEmail)!
+        // presence-gate: bản gốc force-unwrap lời gọi này.
+        //
+        // `NSSharingService(named: .composeEmail)` trả nil khi hệ thống không có ứng dụng
+        // nào nhận việc soạn thư — máy chưa cấu hình tài khoản Mail, hoặc client thư mặc
+        // định không đăng ký dịch vụ đó. Khi ấy `!` không làm hỏng một thao tác: nó GIẾT
+        // CẢ APP. Với một app thanh menu chạy suốt ngày, bấm nhầm một mục menu là mất
+        // luôn công cụ, và người dùng không hiểu vì sao biểu tượng biến mất.
+        //
+        // Bắt được vì `test_emailAttendeesCollectsNonNilEmails` crash trong test host —
+        // một test có chú thích nguyên văn "verify it does not crash".
+        guard let service = NSSharingService(named: NSSharingService.Name.composeEmail) else {
+            MeetingBarLogger.meetingOpening.warning(
+                "emailAttendees: hệ thống không có dịch vụ soạn thư, bỏ qua")
+            return
+        }
         var recipients: [String] = []
         for attendee in event.attendees {
             if let email = attendee.email {
