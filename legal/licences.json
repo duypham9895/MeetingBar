@@ -1,0 +1,119 @@
+{
+  "$comment": [
+    "SỔ GIẤY PHÉP — bản fork presence-gate của MeetingBar.",
+    "",
+    "Dự án này có HAI bề mặt pháp lý tách rời, và trộn chúng là sai:",
+    "",
+    "  1. GIẤY PHÉP MÃ NGUỒN — Apache-2.0, thừa kế từ leits/MeetingBar.",
+    "     Cho phép fork và sửa; buộc giữ NOTICE và ghi rõ file nào đã đổi (§4).",
+    "     §6 KHÔNG cấp quyền dùng nhãn hiệu: tên 'MeetingBar' và bộ nhận diện của",
+    "     nó không đi kèm giấy phép. Đây là lý do bản fork phải đổi bundle ID và",
+    "     vì sao TÊN HIỂN THỊ vẫn đang treo chờ Duy quyết.",
+    "",
+    "  2. NHÃN HIỆU BÊN THỨ BA — 60 icon trong Assets.xcassets/vendor-icons/.",
+    "     Đây là logo của Zoom, Microsoft Teams, Slack, Webex, Google Meet và",
+    "     những bên khác. Apache-2.0 của MeetingBar KHÔNG cấp quyền gì cho chúng,",
+    "     vì leits cũng không sở hữu chúng. Chúng tồn tại được là nhờ nguyên tắc",
+    "     dùng-nêu-tên (nominative use): chỉ để chỉ đúng dịch vụ đó, không gợi ý",
+    "     được bên đó bảo trợ. Phạm vi phân phối hiện tại (Quyết định A: ≤5 đồng",
+    "     nghiệp, Duy tự đưa file) giữ rủi ro ở mức thấp. CHƯA có rà soát từng",
+    "     logo một — xem mục 'chua_xac_minh' bên dưới.",
+    "",
+    "LUẬT: không nêu được giấy phép của một asset trong MỘT DÒNG, từ NGUỒN GỐC,",
+    "thì asset đó không được ship (Vibe CLAUDE.md quy tắc 4).",
+    "",
+    "Định dạng ngày: ISO 8601, YYYY-MM-DD. Trường 'file' là đường dẫn tương đối",
+    "từ gốc repo — scripts/vibe-check.sh đọc đúng trường này."
+  ],
+
+  "du_an": {
+    "ten": "MeetingBar — nhánh feat/presence-gate",
+    "nguon_goc": "https://github.com/leits/MeetingBar",
+    "fork_tai": "https://github.com/duypham9895/MeetingBar",
+    "giay_phep": "Apache-2.0",
+    "cat_tu_commit": "fdd799b",
+    "ngay_fork": "2026-10-13",
+    "nghia_vu_apache_4b": "mọi file đã sửa đều mang chú thích 'presence-gate:' nêu rõ đã đổi gì và vì sao"
+  },
+
+  "asset_tu_lam": [
+    {
+      "file": "MeetingBar/Assets.xcassets/iconCalendar.imageset/Icon-Calendar.svg",
+      "tieu_de": "Chữ V trong khung lịch — icon thanh menu, trạng thái thường",
+      "tac_gia": "dự án này (sinh bằng scripts/make-icons.swift)",
+      "nguon": "scripts/make-icons.swift",
+      "giay_phep": "Apache-2.0 (cùng giấy phép repo)",
+      "ngay_lay": "2026-10-14",
+      "nam_cong_bo_lan_dau": 2026,
+      "ghi_chu": "Khung và gáy lịch giữ nguyên hình học của bản gốc Apache-2.0; phần chữ V là mới."
+    },
+    {
+      "file": "MeetingBar/Assets.xcassets/iconCalendar.imageset/Icon-Calendar_dark-1.svg",
+      "tieu_de": "Bản cho nền tối — nội dung giống hệt bản sáng",
+      "tac_gia": "dự án này (sinh bằng scripts/make-icons.swift)",
+      "nguon": "scripts/make-icons.swift",
+      "giay_phep": "Apache-2.0 (cùng giấy phép repo)",
+      "ngay_lay": "2026-10-14",
+      "nam_cong_bo_lan_dau": 2026,
+      "ghi_chu": "Hai file trùng nội dung là CỐ Ý: ảnh là template, macOS tự nhuộm theo nền. Giữ hai file để không phải sửa Contents.json của upstream."
+    },
+    {
+      "file": "MeetingBar/Assets.xcassets/iconCalendarCheckmark.imageset/Icon-Calendar-Checkmark.svg",
+      "tieu_de": "Chữ V trong khung lịch, thêm chấm-lỗ trạng thái trên gáy",
+      "tac_gia": "dự án này (sinh bằng scripts/make-icons.swift)",
+      "nguon": "scripts/make-icons.swift",
+      "giay_phep": "Apache-2.0 (cùng giấy phép repo)",
+      "ngay_lay": "2026-10-14",
+      "nam_cong_bo_lan_dau": 2026
+    },
+    {
+      "file": "MeetingBar/Assets.xcassets/AppIcon.appiconset/512x512@2x.png",
+      "tieu_de": "Icon ứng dụng — chữ V vàng trên thân tối (ghi một dòng cho cả bộ 11 file)",
+      "tac_gia": "dự án này (sinh bằng scripts/make-icons.swift)",
+      "nguon": "scripts/make-icons.swift",
+      "giay_phep": "Apache-2.0 (cùng giấy phép repo)",
+      "ngay_lay": "2026-10-14",
+      "nam_cong_bo_lan_dau": 2026,
+      "cung_bo": [
+        "MeetingBar/Assets.xcassets/AppIcon.appiconset/16x16.png",
+        "MeetingBar/Assets.xcassets/AppIcon.appiconset/16x16@2x.png",
+        "MeetingBar/Assets.xcassets/AppIcon.appiconset/32x32.png",
+        "MeetingBar/Assets.xcassets/AppIcon.appiconset/32x32@2x.png",
+        "MeetingBar/Assets.xcassets/AppIcon.appiconset/128x128.png",
+        "MeetingBar/Assets.xcassets/AppIcon.appiconset/128x128@2x.png",
+        "MeetingBar/Assets.xcassets/AppIcon.appiconset/256x256.png",
+        "MeetingBar/Assets.xcassets/AppIcon.appiconset/256x256@2x.png",
+        "MeetingBar/Assets.xcassets/AppIcon.appiconset/512x512.png",
+        "MeetingBar/Assets.xcassets/appIconForAbout.imageset/128x128@2x.png"
+      ],
+      "ghi_chu": "Thay hoàn toàn icon chữ 'M' của bản gốc. Vừa là yêu cầu của Duy (phân biệt bản customize) vừa là điều Apache §6 đòi hỏi."
+    }
+  ],
+
+  "phu_thuoc": [
+    { "ten": "AppAuth-iOS",       "phien_ban": "2.0.0",   "giay_phep": "Apache-2.0", "nguon": "https://github.com/openid/AppAuth-iOS.git",         "kiem_ngay": "2026-10-14", "cach_kiem": "đọc file LICENSE trong checkout SPM" },
+    { "ten": "Defaults",          "phien_ban": "9.0.3",   "giay_phep": "MIT",        "nguon": "https://github.com/sindresorhus/Defaults",          "kiem_ngay": "2026-10-14", "cach_kiem": "đọc file LICENSE trong checkout SPM" },
+    { "ten": "KeyboardShortcuts", "phien_ban": "2.3.0",   "giay_phep": "MIT",        "nguon": "https://github.com/sindresorhus/KeyboardShortcuts", "kiem_ngay": "2026-10-14", "cach_kiem": "đọc file LICENSE trong checkout SPM" },
+    { "ten": "LaunchAtLogin",     "phien_ban": "5.0.2",   "giay_phep": "MIT",        "nguon": "https://github.com/sindresorhus/LaunchAtLogin",     "kiem_ngay": "2026-10-14", "cach_kiem": "đọc file LICENSE trong checkout SPM" },
+    { "ten": "swift-syntax",      "phien_ban": "601.0.1", "giay_phep": "Apache-2.0 kèm Runtime Library Exception", "nguon": "https://github.com/swiftlang/swift-syntax", "kiem_ngay": "2026-10-14", "cach_kiem": "đọc file LICENSE trong checkout SPM" }
+  ],
+
+  "chua_xac_minh": [
+    {
+      "muc": "60 icon trong MeetingBar/Assets.xcassets/vendor-icons/",
+      "van_de": "Logo của bên thứ ba (Zoom, Teams, Slack, Webex, Google Meet…) thừa kế từ upstream. CHƯA rà soát từng cái: chưa đối chiếu brand guideline của từng hãng, chưa kiểm có cái nào đã đổi nhận diện khiến bản đang dùng là bản cũ.",
+      "vi_sao_chua_chan": "Phạm vi phân phối hiện tại là ≤5 đồng nghiệp, Duy tự đưa file (Quyết định A). Chưa công khai, chưa lên store.",
+      "mo_khoa_khi": "trước BẤT KỲ hình thức phân phối công khai nào — GitHub Releases, Homebrew cask, hay trang web tải về."
+    },
+    {
+      "muc": "Tên hiển thị của app",
+      "van_de": "Bundle ID đã đổi sang com.duypham.meeting-menubar, nhưng CFBundleName vẫn là 'MeetingBar'. Apache §6 không cấp quyền dùng nhãn hiệu.",
+      "mo_khoa_khi": "Duy chốt tên (câu hỏi số 4 trong danh sách chờ)."
+    },
+    {
+      "muc": "Phông chữ",
+      "van_de": "Đã kiểm 2026-10-13: app KHÔNG khai báo phông tuỳ chỉnh nào, chỉ dùng phông hệ thống. Không phát sinh nghĩa vụ giấy phép phông.",
+      "mo_khoa_khi": "n/a — đã đóng, ghi lại để lần sau khỏi kiểm lại."
+    }
+  ]
+}
