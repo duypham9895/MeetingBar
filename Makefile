@@ -19,7 +19,7 @@ XCFILTER := $(shell command -v xcbeautify >/dev/null 2>&1 && echo 'xcbeautify --
 # Append a JUnit report to app-hosted test runs when xcbeautify is available.
 JUNIT_REPORT := $(shell command -v xcbeautify >/dev/null 2>&1 && echo '--report junit --report-path $(BUILD_DIR)/test-results')
 
-.PHONY: build build-quiet build-release test test-quiet test-app test-app-quiet test-logic test-logic-quiet coverage coverage-report coverage-logic-report coverage-app-report coverage-gate test-summary coverage-codecov lint lint-fix open validate-strings
+.PHONY: build build-quiet build-release test test-quiet test-app test-app-quiet test-logic test-logic-quiet coverage coverage-report coverage-logic-report coverage-app-report coverage-gate test-summary coverage-codecov lint lint-fix open validate-strings install icons
 
 build:
 	@mkdir -p $(BUILD_DIR)
@@ -32,6 +32,17 @@ build-quiet:
 build-release:
 	@mkdir -p $(BUILD_DIR)
 	$(XCODEBUILD) $(XCODEBUILD_FLAGS) -configuration Release build
+
+# presence-gate: build-release ở trên KHÔNG ký và KHÔNG cài. `install` làm cả ba việc —
+# build, ký bằng chứng chỉ Apple Development trong keychain, rồi thay app trong
+# /Applications. Lý do phải tự ký thay vì để xcodebuild ký nằm trong đầu file script.
+install:
+	Scripts/install-local.sh
+
+# Sinh lại toàn bộ icon (3 SVG thanh menu + 11 PNG Dock) từ một nguồn hình học duy nhất.
+# Đổi màu nhấn: sửa hằng `accent` trong script rồi chạy lại target này.
+icons:
+	swift Scripts/make-icons.swift MeetingBar/Assets.xcassets
 
 test: test-logic test-app
 

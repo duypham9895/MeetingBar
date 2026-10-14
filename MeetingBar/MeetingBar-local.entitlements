@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  presence-gate: entitlements cho bản CÀI TẠI CHỖ trên máy người fork.
+
+	  Khác bản gốc MeetingBar.entitlements đúng MỘT khoá — đã bỏ:
+	      com.apple.developer.usernotifications.time-sensitive
+
+	  Vì sao bỏ: mọi entitlement họ `com.apple.developer.*` đòi một provisioning
+	  profile do Apple cấp. Xin profile đòi Xcode đã đăng nhập Apple ID và App ID
+	  đã đăng ký dưới team của mình. Khi chưa có hai thứ đó, build THẤT BẠI hoàn
+	  toàn — không phải mất một tính năng, mà là không ra được app nào.
+
+	  Cái mất, nói thẳng: `content.interruptionLevel = .timeSensitive` ở
+	  NotificationScheduler.swift:266 và SnoozeService.swift:49 sẽ bị hệ thống hạ
+	  xuống mức thường. Thông báo vẫn hiện, nhưng KHÔNG xuyên qua Focus / Do Not
+	  Disturb nữa.
+
+	  Cái KHÔNG mất: tự động mở link họp (automaticEventJoin) không đi qua thông
+	  báo, nên nó chạy nguyên vẹn kể cả khi đang bật Focus.
+
+	  Lấy lại thế nào: Xcode → Settings → Accounts → thêm Apple ID, rồi build bằng
+	  MeetingBar.entitlements như cũ. Không cần sửa dòng code nào.
+
+	  Hai khoá còn lại chỉ có tác dụng dưới App Sandbox. Bản fork đã bỏ sandbox nên
+	  chúng trơ; giữ lại để delta so với bản gốc đúng bằng một dòng.
+	-->
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<key>com.apple.security.personal-information.calendars</key>
+	<true/>
+</dict>
+</plist>

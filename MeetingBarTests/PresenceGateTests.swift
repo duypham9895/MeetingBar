@@ -215,3 +215,31 @@ final class AXTitleMatchTests: XCTestCase {
         XCTAssertFalse(m("Interview — Backend", "Weekly Product Sync"))
     }
 }
+
+// MARK: - Di cư cấu hình: nguồn phải là container CŨ, không phải chính mình
+
+final class SandboxContainerMigrationTests: XCTestCase {
+    /// Bản fork đã đổi bundle ID sang `com.duypham.meeting-menubar` vì App ID
+    /// `leits.MeetingBar` thuộc team KGH289N6T8 và không ký được bằng chứng chỉ của
+    /// người fork. Kể từ lúc đó, `Bundle.main.bundleIdentifier` KHÔNG còn là nơi chứa
+    /// cấu hình cũ nữa.
+    ///
+    /// Chế độ hỏng mà test này canh đã xảy ra thật một lần: di cư chạy, không báo lỗi,
+    /// mang đúng 0 khoá, và `automaticEventJoin` rơi về `false` — tức là tính năng mà
+    /// cả dự án tồn tại để sửa thì tắt ngấm, không một dòng cảnh báo.
+    func testMigrationReadsLegacyContainerNotOwnBundleID() throws {
+        let url = try XCTUnwrap(SandboxContainerMigration.containerPlistURL)
+        let path = url.path
+
+        XCTAssertTrue(
+            path.hasSuffix("Library/Containers/leits.MeetingBar/Data/Library/Preferences/leits.MeetingBar.plist"),
+            "nguồn di cư phải là container của bản App Store cũ, nhận được: \(path)")
+
+        // Chiều ngược lại mới là chiều bắt được lỗi: một bản cài nối cả hai ID lại vẫn
+        // "chứa" chuỗi mong đợi ở trên, nhưng trỏ vào thư mục không tồn tại.
+        let own = try XCTUnwrap(Bundle.main.bundleIdentifier)
+        XCTAssertFalse(
+            path.contains(own),
+            "đường dẫn không được chứa bundle ID của app đang chạy (\(own)) — nhận được: \(path)")
+    }
+}

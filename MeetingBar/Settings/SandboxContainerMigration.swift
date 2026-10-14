@@ -33,10 +33,21 @@ enum SandboxContainerMigration {
         "NSWindow Frame",            // tiền tố — xử lý riêng bên dưới
     ]
 
+    /// Bundle ID của MeetingBar gốc trên App Store — nguồn DUY NHẤT của cấu hình cũ.
+    ///
+    /// Cố ý KHÔNG hỏi `Bundle.main.bundleIdentifier`. Bản fork buộc phải đổi bundle ID:
+    /// App ID `leits.MeetingBar` thuộc team KGH289N6T8, không ký được bằng chứng chỉ của
+    /// người fork, nên Xcode không cấp nổi provisioning profile. Nếu để hàm này hỏi
+    /// chính mình, nó sẽ trỏ vào một thư mục Containers chưa bao giờ tồn tại và di cư sẽ
+    /// IM LẶNG không làm gì — đúng chế độ hỏng mà cả file này sinh ra để chặn.
+    ///
+    /// Container nguồn là một SỰ KIỆN LỊCH SỬ (app nào đã ghi nó, ghi ở đâu), không phải
+    /// thuộc tính của app đang chạy. Vì vậy hằng số cứng ở đây ĐÚNG HƠN giá trị dẫn xuất.
+    private static let legacyBundleID = "leits.MeetingBar"
+
     static var containerPlistURL: URL? {
-        guard let bundleID = Bundle.main.bundleIdentifier else { return nil }
-        return FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Containers/\(bundleID)/Data/Library/Preferences/\(bundleID).plist")
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Containers/\(legacyBundleID)/Data/Library/Preferences/\(legacyBundleID).plist")
     }
 
     /// Chạy MỘT LẦN, càng sớm càng tốt, TRƯỚC khi bất cứ gì đọc `AppSettings`.

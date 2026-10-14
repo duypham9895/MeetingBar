@@ -26,3 +26,7 @@ build
 .ignore
 AGENTS.md
 CLAUDE.md
+
+# bản build cục bộ của scripts/install-local.sh
+.build-release/
+.build-release.log
